@@ -53,7 +53,6 @@ namespace Simulator_App
             } 
             else
             {
-                Console.WriteLine("Koniec");
                 this.SetButtonToDefault();
             }
             
@@ -78,7 +77,10 @@ namespace Simulator_App
         public OptionsInput GetSettingsInput()
         {
             var settings = new OptionsInput();
-            settings.numberOfIterations = this.IterationsInput.Text;
+            settings.xSize = this.XSizeInput.Text;
+            settings.ySize = this.YSizeInput.Text;
+            settings.xStart = this.XStartInput.Text;
+            settings.yStart = this.YStartInput.Text;
             settings.numberOfReplications = this.ReplicationsInput.Text;
             settings.tresHold = this.TresholdInput.Text;
             settings.errorOccured = false;
@@ -93,13 +95,30 @@ namespace Simulator_App
             {
                 this.SetOptionsInputText(settings);
             }
+            else
+            {
+                this.SetOptionsLabelText(settings);
+            }
         }
 
         private void SetOptionsInputText(OptionsInput settings)
         {
-            this.IterationsInput.Text = settings.numberOfIterations;
+            this.XSizeInput.Text = settings.xSize;
+            this.YSizeInput.Text = settings.ySize;
+            this.XStartInput.Text = settings.xStart;
+            this.YStartInput.Text = settings.yStart;
             this.ReplicationsInput.Text = settings.numberOfReplications;
             this.TresholdInput.Text = settings.tresHold;
+        }
+
+        private void SetOptionsLabelText(OptionsInput settings)
+        {
+            XSizeLabel.Text = $"X size (actual {settings.xSize}):";
+            YSizeLabel.Text = $"Y size (actual {settings.ySize}):";
+            XStartLabel.Text = $"X start position (actual {settings.xStart}):";
+            YStartLabel.Text = $"Y start position (actual {settings.yStart}):";
+            tresholdValueLabel.Text = $"Size of K (actual {settings.tresHold}):";
+            replicationLabel.Text = $"Replications (actual {settings.numberOfReplications}):";
         }
 
         private void StopButton_Click(object sender, EventArgs e)

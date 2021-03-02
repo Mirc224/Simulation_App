@@ -8,8 +8,11 @@ namespace Simulator_App.Model
 {
     class SimulationSettings
     {
-        public int NumberOfIterations { get; set; }
-        public int NumberOfReplications { get; set; }
-        public double TresHold { get; set; }
+        public int NumberOfReplications { get; set; } = 100;
+        public double TresHold { get; set; } = 1;
+        public int XSize { get; set; } = 5;
+        public int YSize { get; set; } = 5;
+        public int XStart { get; set; } = 0;
+        public int YStart { get; set; } = 0;
     }
 }

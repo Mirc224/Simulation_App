@@ -12,7 +12,10 @@ namespace Simulator_App.Controller
 {
     public struct OptionsInput
     {
-        public string numberOfIterations;
+        public string xSize;
+        public string ySize;
+        public string xStart;
+        public string yStart;
         public string numberOfReplications;
         public string tresHold;
         public bool errorOccured;
@@ -40,6 +43,7 @@ namespace Simulator_App.Controller
             {
                 _simulation.Reset();
                 _lineSeries = new LineSeries();
+                graph.Model.ResetAllAxes();
                 graph.Model.Series.Clear();
                 graph.Model.Series.Add(_lineSeries);
                 graph.InvalidatePlot(true);
@@ -54,11 +58,13 @@ namespace Simulator_App.Controller
             return true;
         }
 
-        public bool AfterIterationUpdate()
+        public bool AfterReplicationUpdate()
         {
             var iterationResults = this._simulation.GetIterationsResult();
             double iterationsSum = iterationResults.Sum();
             int iterationsCount = iterationResults.Count;
+            Console.WriteLine(iterationsSum / iterationsCount);
+            Console.WriteLine((double)this._simulation.MoreThanK / iterationsCount);
             this._lineSeries.Points.Add(new OxyPlot.DataPoint(iterationsCount, iterationsSum/iterationsCount));
             this._simulationWorker.ReportProgress(iterationsCount);
             if (this._simulationWorker.CancellationPending)
@@ -81,11 +87,33 @@ namespace Simulator_App.Controller
         {
             int numberOfIterations = -1;
             int numberOfReplications = -1;
+            int xSize = -1;
+            int ySize = -1;
+            int xStart = -1;
+            int yStart = -1;
             double tresHold = -1;
-            if (!Int32.TryParse(input.numberOfIterations, out numberOfIterations))
+            if (!Int32.TryParse(input.xSize, out xSize))
             {
                 input.errorOccured = true;
-                input.numberOfIterations = "Error";
+                input.xSize = "Error";
+            }
+
+            if (!Int32.TryParse(input.ySize, out ySize))
+            {
+                input.errorOccured = true;
+                input.ySize = "Error";
+            }
+
+            if (!Int32.TryParse(input.xStart, out xStart))
+            {
+                input.errorOccured = true;
+                input.xStart = "Error";
+            }
+
+            if (!Int32.TryParse(input.yStart, out yStart))
+            {
+                input.errorOccured = true;
+                input.yStart = "Error";
             }
 
             if (!Int32.TryParse(input.numberOfReplications, out numberOfReplications))
@@ -105,7 +133,10 @@ namespace Simulator_App.Controller
                 return null;
             }
 
-            return new SimulationSettings { NumberOfIterations = numberOfIterations,
+            return new SimulationSettings { XSize = xSize,
+                                            YSize = ySize,
+                                            XStart = xStart, 
+                                            YStart = yStart,
                                             NumberOfReplications = numberOfReplications,
                                             TresHold = tresHold};
         }
