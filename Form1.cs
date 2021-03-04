@@ -9,40 +9,64 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Simulator_App.Controller;
 
+
 namespace Simulator_App
 {
     public partial class AppGUI : Form
     {
 
         private Controller.Controller _controller;
+        private View.SimulationResultsView SimResultView;
+        private View.SimulationOptionsView SimOptionsView;
         public AppGUI()
         {
             InitializeComponent();
-            this.SimulationGraph.Model = new OxyPlot.PlotModel { Title = "Simulacia" };
+            this.SimResultView = new View.SimulationResultsView(SimulationGraph,
+                                                                ProbabilityGraph,
+                                                                MeanValueLabel,
+                                                                ProbabilityLabel);
+
+            this.SimOptionsView = new View.SimulationOptionsView(new Label[] { XSizeLabel, 
+                                                                               YSizeLabel,
+                                                                               XStartLabel,
+                                                                               YStartLabel,
+                                                                               TresholdLabel,
+                                                                               ReplicationsLabel},
+                                                                 new TextBox[] { XSizeInput,
+                                                                                 YSizeInput,
+                                                                                 XStartInput,
+                                                                                 YStartInput,
+                                                                                 TresholdInput,
+                                                                                 ReplicationsInput});
             this._controller = new Controller.Controller(this);
         }
 
         private void SimulationWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            this._controller.InitilizeSimulation(this.SimulationGraph);
+            this._controller.InitilizeSimulation(SimResultView);
             this._controller.RunSimulation(this.simulationWorker);
+            var lastData = new Controller.DataForUpdate(this._controller.lastDataForUpdate);
+            lastData.redrawGraphs = true;
+            this.simulationWorker.ReportProgress(0, lastData);
+            
             if(this.simulationWorker.CancellationPending)
             {
-                if (!this._controller.SimmulationFinished)
+                if (this._controller.SimulationStatus != Model.Simulation.SimulationStatus.FINISHED)
                     e.Cancel = true;
             }
         }
 
         private void SimulationWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            SimulationGraph.InvalidatePlot(true);
+            DataForUpdate data = (DataForUpdate)e.UserState;
+            this.SimResultView.Update(data);
         }
 
         private void SimulationWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             if(e.Cancelled)
             {
-                if (this._controller.GetPauseClicked())
+                if (this._controller.SimulationStatus == Model.Simulation.SimulationStatus.PAUSED)
                     this.RunPauseButton.Text= "Continue";
                 else
                 {
@@ -76,15 +100,7 @@ namespace Simulator_App
         
         public OptionsInput GetSettingsInput()
         {
-            var settings = new OptionsInput();
-            settings.xSize = this.XSizeInput.Text;
-            settings.ySize = this.YSizeInput.Text;
-            settings.xStart = this.XStartInput.Text;
-            settings.yStart = this.YStartInput.Text;
-            settings.numberOfReplications = this.ReplicationsInput.Text;
-            settings.tresHold = this.TresholdInput.Text;
-            settings.errorOccured = false;
-            return settings;
+            return SimOptionsView.GetOptionsInput();
         }
 
         private void OptConfirmButton_Click(object sender, EventArgs e)
@@ -93,32 +109,28 @@ namespace Simulator_App
             this._controller.TryApplySimulationSetings(ref settings);
             if(settings.errorOccured)
             {
-                this.SetOptionsInputText(settings);
+                this.SimOptionsView.SetOptionsInputText(settings);
             }
             else
             {
-                this.SetOptionsLabelText(settings);
+                this.SimOptionsView.SetOptionsLablesText(settings);
             }
         }
 
-        private void SetOptionsInputText(OptionsInput settings)
+        public void InitilaizeOptionsValues(Model.SimulationSettings settings)
         {
-            this.XSizeInput.Text = settings.xSize;
-            this.YSizeInput.Text = settings.ySize;
-            this.XStartInput.Text = settings.xStart;
-            this.YStartInput.Text = settings.yStart;
-            this.ReplicationsInput.Text = settings.numberOfReplications;
-            this.TresholdInput.Text = settings.tresHold;
-        }
-
-        private void SetOptionsLabelText(OptionsInput settings)
-        {
-            XSizeLabel.Text = $"X size (actual {settings.xSize}):";
-            YSizeLabel.Text = $"Y size (actual {settings.ySize}):";
-            XStartLabel.Text = $"X start position (actual {settings.xStart}):";
-            YStartLabel.Text = $"Y start position (actual {settings.yStart}):";
-            tresholdValueLabel.Text = $"Size of K (actual {settings.tresHold}):";
-            replicationLabel.Text = $"Replications (actual {settings.numberOfReplications}):";
+            var data = new OptionsInput
+            {
+                xSize = settings.XSize.ToString(),
+                ySize = settings.YSize.ToString(),
+                xStart = settings.XStart.ToString(),
+                yStart = settings.YStart.ToString(),
+                numberOfReplications = settings.NumberOfReplications.ToString(),
+                tresHold = settings.TresHold.ToString(),
+                errorOccured = false
+            };
+            SimOptionsView.SetOptionsInputText(data);
+            SimOptionsView.SetOptionsLablesText(data);
         }
 
         private void StopButton_Click(object sender, EventArgs e)
@@ -131,6 +143,7 @@ namespace Simulator_App
                 this._controller.ResetSimulation();
             }
             this.SetButtonToDefault();
+            this._controller.SimulationStatus = Model.Simulation.SimulationStatus.CANCELED;
         }
 
         private void SetButtonToDefault()
@@ -139,5 +152,6 @@ namespace Simulator_App
             this.StopButton.Enabled = false;
             this._controller.SetPauseClicked(false);
         }
+
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Simulator_App.Model
 {
-    class SimulationSettings
+    public class SimulationSettings
     {
         public int NumberOfReplications { get; set; } = 100;
         public double TresHold { get; set; } = 1;

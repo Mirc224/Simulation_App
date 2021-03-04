@@ -10,24 +10,33 @@ namespace Simulator_App.Model
 {
     class Simulation
     {
+        public enum SimulationStatus
+        {
+            FINISHED,
+            CANCELED,
+            PAUSED,
+            RUNNING
+        }
+
         public int ActualReplication { get; set; } = 0;
         public int NumberOfReplications { get; set; } = 100;
         public double TresHold { get; set; }
         public double ReplicationResult { get; set; } = 0;
-        public List<double> _iterationsResult { get; set; }
+        public List<double> ReplicationsResult { get; set; }
 
         public Controller.Controller _controller { get; set; }
 
-        public SimulationSettings SimulationSettings { get; set; } = new SimulationSettings();
+        public SimulationSettings SimulationSettings { get; set; }
 
         private RobotCompetition robotProblem = new RobotCompetition(5, 5, 0, 0);
 
         public int MoreThanK { get; set; } = 0;
 
-        public Simulation(Controller.Controller controller)
+        public Simulation(Controller.Controller controller, SimulationSettings defaultSettings)
         {
             this._controller = controller;
-            this._iterationsResult = new List<double>();
+            this.ApplySettings(defaultSettings);
+            this.ReplicationsResult = new List<double>();
         }
 
         public void BeforeReplication()
@@ -37,7 +46,7 @@ namespace Simulator_App.Model
 
         public bool AfterReplication()
         {
-            this._iterationsResult.Add(ReplicationResult);
+            this.ReplicationsResult.Add(ReplicationResult);
             if (ReplicationResult > SimulationSettings.TresHold)
                 ++MoreThanK;
 
@@ -47,14 +56,17 @@ namespace Simulator_App.Model
         public void DoReplication()
         {
             ReplicationResult = robotProblem.runTest();
-            System.Threading.Thread.Sleep(25);
+            //System.Threading.Thread.Sleep(1);
         }
 
-        public bool RunSimulation()
+        public SimulationStatus RunSimulation()
         {
             bool cancelPending = false;
-            robotProblem = new RobotCompetition(SimulationSettings.XSize, SimulationSettings.YSize,
-                                                SimulationSettings.XStart, SimulationSettings.YStart);
+            // V pripade ak pokracujeme v predchadzajucej simulacii, tak nevytvarame novu instanciu objektu.
+            if(ActualReplication == 0)
+                robotProblem.Reset(SimulationSettings.XSize, SimulationSettings.YSize,
+                                                    SimulationSettings.XStart, SimulationSettings.YStart);
+
             for (ActualReplication = ActualReplication; ActualReplication < NumberOfReplications; ActualReplication++)
             {
                 BeforeReplication();
@@ -64,9 +76,9 @@ namespace Simulator_App.Model
                     break;
             }
             if (cancelPending)
-                return false;
+                return SimulationStatus.CANCELED;
 
-            return true;
+            return SimulationStatus.FINISHED;
         }
 
         public void ApplySettings(SimulationSettings settings)
@@ -74,17 +86,23 @@ namespace Simulator_App.Model
             this.SimulationSettings = settings;
             this.NumberOfReplications = SimulationSettings.NumberOfReplications;
             this.TresHold = SimulationSettings.TresHold;
+            this.ActualReplication = 0;
         }
 
-        public List<double> GetIterationsResult() { return this._iterationsResult; }
+        public List<double> GetIterationsResult() { return this.ReplicationsResult; }
 
         public bool Reset()
         {
             this.ActualReplication = 0;
             this.MoreThanK = 0;
             this.ReplicationResult = 0;
-            this._iterationsResult.Clear();
+            this.ReplicationsResult.Clear();
             return true;
+        }
+
+        public bool HasFinished()
+        {
+            return ActualReplication == NumberOfReplications;
         }
     }
 }

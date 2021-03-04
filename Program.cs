@@ -17,6 +17,20 @@ namespace Simulator_App
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new AppGUI());
+            /*            var robComp = new Model.RobotCompetition(10,10, 5, 5);
+                        double sumOfMoves = 0;
+                        int lessThanK = 0;
+                        int numberOfIterations = 1000000;
+                        double result = 0;
+                        for (int i = 0; i < numberOfIterations; i++)
+                        {
+                            result = robComp.runTest();
+                            sumOfMoves += result;
+                            if (result > 1)
+                                ++lessThanK;
+                        }
+                        Console.WriteLine((double)lessThanK/numberOfIterations);
+                        Console.WriteLine((double)sumOfMoves/numberOfIterations);*/
         }
     }
 }

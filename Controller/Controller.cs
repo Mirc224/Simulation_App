@@ -20,41 +20,86 @@ namespace Simulator_App.Controller
         public string tresHold;
         public bool errorOccured;
     }
+
+    public struct DataForUpdate
+    {
+        public double meanValue;
+        public double probability;
+        public bool redrawGraphs;
+
+        public DataForUpdate(DataForUpdate othr)
+        {
+            this.meanValue = othr.meanValue;
+            this.probability = othr.probability;
+            this.redrawGraphs = othr.redrawGraphs;
+        }
+    }
     class Controller
     {
         private AppGUI _applicationGUI;
-        private LineSeries _lineSeries;
+        private LineSeries _lineSeriesMeanMoves;
+        private LineSeries _lineSeriesProbability;
         private Simulation _simulation;
         private BackgroundWorker _simulationWorker;
 
-        public bool SimmulationFinished { get; set; }
+        public DataForUpdate lastDataForUpdate = new DataForUpdate();
+
+        private SimulationSettings _simulationSettings;
+
+        public Simulation.SimulationStatus SimulationStatus { get; set; } = Simulation.SimulationStatus.FINISHED;
+
         private bool PauseClicked;
 
         public Controller(AppGUI applicationGUI)
         {
+            _simulationSettings = new SimulationSettings
+            {
+                NumberOfReplications = 10000,
+                TresHold = 1,
+                XSize = 10,
+                YSize = 10,
+                XStart = 0,
+                YStart = 0
+            };
+
             this._applicationGUI = applicationGUI;
-            this._simulation = new Simulation(this);
-            SimmulationFinished = true;
+            this._applicationGUI.InitilaizeOptionsValues(_simulationSettings);
+            this._simulation = new Simulation(this, _simulationSettings);
         }
 
-        public bool InitilizeSimulation(PlotView graph)
+        public bool InitilizeSimulation(View.SimulationResultsView simResView)
         {
-            if (SimmulationFinished)
+            if (SimulationStatus == Simulation.SimulationStatus.FINISHED || SimulationStatus == Simulation.SimulationStatus.CANCELED)
             {
                 _simulation.Reset();
-                _lineSeries = new LineSeries();
-                graph.Model.ResetAllAxes();
-                graph.Model.Series.Clear();
-                graph.Model.Series.Add(_lineSeries);
-                graph.InvalidatePlot(true);
+                this.SetLineSeries();
+                simResView.SetGraphs(_lineSeriesMeanMoves, _lineSeriesProbability);
             }
             return true;
         }
+
+        private void SetLineSeries()
+        {
+            _lineSeriesMeanMoves = new LineSeries();
+            _lineSeriesMeanMoves.Title = "Mean number of moves";
+            _lineSeriesProbability = new LineSeries();
+            _lineSeriesProbability.Title = "Probability";
+            _lineSeriesProbability.Color = OxyPlot.OxyColor.FromRgb(255, 0, 0);
+        }
         public bool RunSimulation(BackgroundWorker simulationWorker)
         {
-            this.SimmulationFinished = true;
             this._simulationWorker = simulationWorker;
-            this.SimmulationFinished = this._simulation.RunSimulation();
+            this.SimulationStatus = Simulation.SimulationStatus.RUNNING;
+            this.SimulationStatus = this._simulation.RunSimulation();
+            if(this.SimulationStatus != Simulation.SimulationStatus.FINISHED)
+            {
+                if (this.PauseClicked)
+                    this.SimulationStatus = Simulation.SimulationStatus.PAUSED;
+            }
+            else
+            {
+                Console.WriteLine(lastDataForUpdate.meanValue);
+            }
             return true;
         }
 
@@ -63,10 +108,22 @@ namespace Simulator_App.Controller
             var iterationResults = this._simulation.GetIterationsResult();
             double iterationsSum = iterationResults.Sum();
             int iterationsCount = iterationResults.Count;
-            Console.WriteLine(iterationsSum / iterationsCount);
-            Console.WriteLine((double)this._simulation.MoreThanK / iterationsCount);
-            this._lineSeries.Points.Add(new OxyPlot.DataPoint(iterationsCount, iterationsSum/iterationsCount));
-            this._simulationWorker.ReportProgress(iterationsCount);
+            var meanValue = iterationsSum / iterationsCount;
+            var probability = (double)this._simulation.MoreThanK / iterationsCount;
+
+            if(iterationsCount >= _simulationSettings.NumberOfReplications * 0.25)
+            {
+                /*this._lineSeriesMeanMoves.Points.RemoveAt(0);
+                this._lineSeriesProbability.Points.RemoveAt(0);*/
+                this._lineSeriesMeanMoves.Points.Add(new OxyPlot.DataPoint(iterationsCount, meanValue));
+                this._lineSeriesProbability.Points.Add(new OxyPlot.DataPoint(iterationsCount, probability));
+            }
+
+            this.lastDataForUpdate.meanValue = meanValue;
+            this.lastDataForUpdate.probability = probability;
+            this.lastDataForUpdate.redrawGraphs = false;
+            if(iterationsCount % (int)(_simulationSettings.NumberOfReplications * 0.05) == 0)
+                this._simulationWorker.ReportProgress(iterationsCount, lastDataForUpdate);
             if (this._simulationWorker.CancellationPending)
                 return true;
 
@@ -143,12 +200,12 @@ namespace Simulator_App.Controller
         
         private void SetSimulationSettings(SimulationSettings simSettings) 
         {
-            this._simulation.ApplySettings(simSettings);
+            this._simulationSettings = simSettings;
+            this._simulation.ApplySettings(_simulationSettings);
         }
 
         public void ResetSimulation()
         {
-            this.SimmulationFinished = true;
             this._simulation.Reset();
             this.PauseClicked = false;
         }
