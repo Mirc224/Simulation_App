@@ -55,6 +55,7 @@ namespace Simulator_App
             this.MeanValueLabel = new System.Windows.Forms.Label();
             this.SimulationGraph = new OxyPlot.WindowsForms.PlotView();
             this.simulationWorker = new System.ComponentModel.BackgroundWorker();
+            this.StrategyMovesLabel = new System.Windows.Forms.Label();
             this.simOptionsPanel.SuspendLayout();
             this.optionsLayoutPanel.SuspendLayout();
             this.simControlPanel.SuspendLayout();
@@ -132,14 +133,14 @@ namespace Simulator_App
             this.YSizeInput.Size = new System.Drawing.Size(131, 22);
             this.YSizeInput.TabIndex = 3;
             // 
-            // replicationLabel
+            // ReplicationsLabel
             // 
             this.ReplicationsLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.ReplicationsLabel.AutoSize = true;
             this.ReplicationsLabel.Location = new System.Drawing.Point(3, 158);
-            this.ReplicationsLabel.Name = "replicationLabel";
+            this.ReplicationsLabel.Name = "ReplicationsLabel";
             this.ReplicationsLabel.Size = new System.Drawing.Size(131, 64);
             this.ReplicationsLabel.TabIndex = 2;
             this.ReplicationsLabel.Text = "Replications (actual 100):";
@@ -154,14 +155,14 @@ namespace Simulator_App
             this.ReplicationsInput.Size = new System.Drawing.Size(131, 22);
             this.ReplicationsInput.TabIndex = 7;
             // 
-            // tresholdValueLabel
+            // TresholdLabel
             // 
             this.TresholdLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.TresholdLabel.AutoSize = true;
             this.TresholdLabel.Location = new System.Drawing.Point(3, 124);
-            this.TresholdLabel.Name = "tresholdValueLabel";
+            this.TresholdLabel.Name = "TresholdLabel";
             this.TresholdLabel.Size = new System.Drawing.Size(131, 34);
             this.TresholdLabel.TabIndex = 4;
             this.TresholdLabel.Text = "Size of K (actual 1): ";
@@ -316,6 +317,7 @@ namespace Simulator_App
             // 
             // StatusPanel
             // 
+            this.StatusPanel.Controls.Add(this.StrategyMovesLabel);
             this.StatusPanel.Controls.Add(this.ProbabilityLabel);
             this.StatusPanel.Controls.Add(this.MeanValueLabel);
             this.StatusPanel.Dock = System.Windows.Forms.DockStyle.Top;
@@ -363,6 +365,15 @@ namespace Simulator_App
             this.simulationWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.SimulationWorker_DoWork);
             this.simulationWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.SimulationWorker_ProgressChanged);
             this.simulationWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.SimulationWorker_RunWorkerCompleted);
+            // 
+            // StrategyMovesLabel
+            // 
+            this.StrategyMovesLabel.AutoSize = true;
+            this.StrategyMovesLabel.Location = new System.Drawing.Point(629, 16);
+            this.StrategyMovesLabel.Name = "StrategyMovesLabel";
+            this.StrategyMovesLabel.Size = new System.Drawing.Size(178, 21);
+            this.StrategyMovesLabel.TabIndex = 2;
+            this.StrategyMovesLabel.Text = "Strategy mean value:";
             // 
             // AppGUI
             // 
@@ -414,6 +425,7 @@ namespace Simulator_App
         private System.Windows.Forms.Label ProbabilityLabel;
         private System.Windows.Forms.Label MeanValueLabel;
         private OxyPlot.WindowsForms.PlotView ProbabilityGraph;
+        private System.Windows.Forms.Label StrategyMovesLabel;
     }
 }
 

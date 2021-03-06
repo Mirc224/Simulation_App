@@ -25,6 +25,7 @@ namespace Simulator_App.Controller
     {
         public double meanValue;
         public double probability;
+        public double strategyMoves;
         public bool redrawGraphs;
 
         public DataForUpdate(DataForUpdate othr)
@@ -32,9 +33,10 @@ namespace Simulator_App.Controller
             this.meanValue = othr.meanValue;
             this.probability = othr.probability;
             this.redrawGraphs = othr.redrawGraphs;
+            this.strategyMoves = othr.strategyMoves;
         }
     }
-    class Controller
+    public class Controller
     {
         private AppGUI _applicationGUI;
         private LineSeries _lineSeriesMeanMoves;
@@ -64,7 +66,7 @@ namespace Simulator_App.Controller
 
             this._applicationGUI = applicationGUI;
             this._applicationGUI.InitilaizeOptionsValues(_simulationSettings);
-            this._simulation = new Simulation(this, _simulationSettings);
+            this._simulation = new MonteCarloSimulation(this, _simulationSettings);
         }
 
         public bool InitilizeSimulation(View.SimulationResultsView simResView)
@@ -89,6 +91,7 @@ namespace Simulator_App.Controller
         public bool RunSimulation(BackgroundWorker simulationWorker)
         {
             this._simulationWorker = simulationWorker;
+            this._simulation.BeforeSimulation();
             this.SimulationStatus = Simulation.SimulationStatus.RUNNING;
             this.SimulationStatus = this._simulation.RunSimulation();
             if(this.SimulationStatus != Simulation.SimulationStatus.FINISHED)
@@ -105,22 +108,25 @@ namespace Simulator_App.Controller
 
         public bool AfterReplicationUpdate()
         {
-            var iterationResults = this._simulation.GetIterationsResult();
-            double iterationsSum = iterationResults.Sum();
-            int iterationsCount = iterationResults.Count;
-            var meanValue = iterationsSum / iterationsCount;
-            var probability = (double)this._simulation.MoreThanK / iterationsCount;
+            var replicationResultsList = this._simulation.GetReplicationsResult();
+            int iterationsCount = replicationResultsList.Count;
 
-            if(iterationsCount >= _simulationSettings.NumberOfReplications * 0.25)
+            var lastReplication = replicationResultsList.Last();
+
+            var meanValue = lastReplication.CumulativeNumberOfMoves / iterationsCount;
+            var probability = (double)lastReplication.CumulativeMoreThanK / iterationsCount;
+            var meanStrategy = lastReplication.CumulativeStrategyMoves / iterationsCount;
+
+            if (iterationsCount >= _simulationSettings.NumberOfReplications * 0.25)
             {
-                /*this._lineSeriesMeanMoves.Points.RemoveAt(0);
-                this._lineSeriesProbability.Points.RemoveAt(0);*/
+
                 this._lineSeriesMeanMoves.Points.Add(new OxyPlot.DataPoint(iterationsCount, meanValue));
                 this._lineSeriesProbability.Points.Add(new OxyPlot.DataPoint(iterationsCount, probability));
             }
 
             this.lastDataForUpdate.meanValue = meanValue;
             this.lastDataForUpdate.probability = probability;
+            this.lastDataForUpdate.strategyMoves = meanStrategy;
             this.lastDataForUpdate.redrawGraphs = false;
             if(iterationsCount % (int)(_simulationSettings.NumberOfReplications * 0.05) == 0)
                 this._simulationWorker.ReportProgress(iterationsCount, lastDataForUpdate);

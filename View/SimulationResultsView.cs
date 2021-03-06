@@ -9,18 +9,20 @@ using OxyPlot.Series;
 
 namespace Simulator_App.View
 {
-    class SimulationResultsView
+    public class SimulationResultsView
     {
         public PlotView SimulationGraph { get; set; }
         public PlotView ProbabilityGraph { get; set; }
         public Label MeanValueLabel { get; set; }
         public Label ProbabilityLabel { get; set; }
-        public SimulationResultsView(PlotView smGraph, PlotView probGraph, Label meanValueL, Label probL)
+        public Label StrategyLabel { get; set; }
+        public SimulationResultsView(PlotView smGraph, PlotView probGraph, Label meanValueL, Label probL, Label strategyL)
         {
             this.SimulationGraph = smGraph;
             this.ProbabilityGraph = probGraph;
             this.MeanValueLabel = meanValueL;
             this.ProbabilityLabel = probL;
+            this.StrategyLabel = strategyL;
             this.Initialize();
         }
 
@@ -34,7 +36,7 @@ namespace Simulator_App.View
         {
             if(data.redrawGraphs)
                 RedrawGraphs();
-            UpdateValueLabels(data.meanValue, data.probability);
+            UpdateValueLabels(data.meanValue, data.probability, data.strategyMoves);
         }
 
         public void RedrawGraphs()
@@ -43,10 +45,11 @@ namespace Simulator_App.View
             ProbabilityGraph.InvalidatePlot(true);
         }
 
-        private void UpdateValueLabels(double meanValue, double probability)
+        private void UpdateValueLabels(double meanValue, double probability, double meanStrategy)
         {
             this.MeanValueLabel.Text = $"Mean value: {meanValue}";
             this.ProbabilityLabel.Text = $"More than K: {probability}";
+            this.StrategyLabel.Text = $"Strategy mean value: {meanStrategy}";
         }
 
         public void SetGraphs(LineSeries meanMovSeries, LineSeries probabilitySeries)

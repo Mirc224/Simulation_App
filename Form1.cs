@@ -24,7 +24,8 @@ namespace Simulator_App
             this.SimResultView = new View.SimulationResultsView(SimulationGraph,
                                                                 ProbabilityGraph,
                                                                 MeanValueLabel,
-                                                                ProbabilityLabel);
+                                                                ProbabilityLabel,
+                                                                StrategyMovesLabel);
 
             this.SimOptionsView = new View.SimulationOptionsView(new Label[] { XSizeLabel, 
                                                                                YSizeLabel,
@@ -51,7 +52,7 @@ namespace Simulator_App
             
             if(this.simulationWorker.CancellationPending)
             {
-                if (this._controller.SimulationStatus != Model.Simulation.SimulationStatus.FINISHED)
+                if (this._controller.SimulationStatus != Model.MonteCarloSimulation.SimulationStatus.FINISHED)
                     e.Cancel = true;
             }
         }
@@ -66,7 +67,7 @@ namespace Simulator_App
         {
             if(e.Cancelled)
             {
-                if (this._controller.SimulationStatus == Model.Simulation.SimulationStatus.PAUSED)
+                if (this._controller.SimulationStatus == Model.MonteCarloSimulation.SimulationStatus.PAUSED)
                     this.RunPauseButton.Text= "Continue";
                 else
                 {
@@ -143,7 +144,7 @@ namespace Simulator_App
                 this._controller.ResetSimulation();
             }
             this.SetButtonToDefault();
-            this._controller.SimulationStatus = Model.Simulation.SimulationStatus.CANCELED;
+            this._controller.SimulationStatus = Model.MonteCarloSimulation.SimulationStatus.CANCELED;
         }
 
         private void SetButtonToDefault()
