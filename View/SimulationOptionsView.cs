@@ -8,6 +8,7 @@ using Simulator_App.Controller;
 
 namespace Simulator_App.View
 {
+    // Trieda obsahuje grafické prvky panelu pre nastavenia simulácie.
     class SimulationOptionsView
     {
         public Label XSizeLabel { get; set; }
@@ -51,7 +52,7 @@ namespace Simulator_App.View
         {
             SeedInput.Enabled = false;
         }
-
+        // Získa hodnoty, ktoré boli zadané na vstupe jednotlivých TextBoxov.
         public OptionsInput GetOptionsInput()
         {
             var settings = new OptionsInput();
@@ -69,7 +70,7 @@ namespace Simulator_App.View
             settings.errorOccured = false;
             return settings;
         }
-
+        // Nastaví hodnoty, textových oblastí.
         public void SetOptionsInputText(OptionsInput settings)
         {
             this.XSizeInput.Text = settings.xSize;
@@ -81,7 +82,7 @@ namespace Simulator_App.View
             if (!this.RandomSeedCheck.Checked)
                 this.SeedInput.Text = settings.seed;
         }
-
+        // Metóda na nastavenie textu na labeloch.
         public void SetOptionsLablesText(OptionsInput settings)
         {
             XSizeLabel.Text = $"X size (actual {settings.xSize}):";
@@ -91,7 +92,7 @@ namespace Simulator_App.View
             TresholdLabel.Text = $"Size of K (actual {settings.tresHold}):";
             ReplicationsLabel.Text = $"Replications (actual {settings.numberOfReplications}):";
         }
-
+        // Metóda, ktorá aktivuje alebo deaktivuje pole pre zadavnie seedu na zákalde toho, či je začiarknutý checkbox.
         public void RandomSeedCheckboxToggle()
         {
             if (!RandomSeedCheck.Checked)

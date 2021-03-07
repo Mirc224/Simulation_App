@@ -8,12 +8,15 @@ using Simulator_App.Controller;
 
 namespace Simulator_App.Model
 {
+    // Trieda je potomkom triedy simulácia a ide triedu, ktorá sa stará o vykonanie statickej simulácie Monte Carlo.
     class MonteCarloSimulation : Simulation
     {
+        // Atribút, ktorý udáva hraničnú hodnotu, po prekročení ktorej dôjde k nejakej udalosti.
         public double TresHold { get; set; }
-
+        // Inštancia triedy robotCompetition, ktorá obsahuje implementáciu problému.
         private RobotCompetition robotProblem = new RobotCompetition(5, 5, 0, 0);
-
+        // Atribút v sebe drží hodnotu o počte vykonaných krokov pri použití stratégie. Stratégia je exaktná, takže sa nebude
+        // počas replikácií meniť a preto je zbytočné ju za každým počítať nanovo.
         private double StrategyNumberOfMoves = -1;
 
         public MonteCarloSimulation(Controller.Controller controller, SimulationSettings defaultSettings)
@@ -22,46 +25,48 @@ namespace Simulator_App.Model
             this.ApplySettings(defaultSettings);
             this.ReplicationsResult = new List<ReplicationResult>();
         }
-
+        // Metóda, ktorá sa vykoná pred každou replikáciou.
         public override void BeforeReplication()
         {
 
         }
-
+        // Metóda, ktorá sa vykoná po každej replikácií.
         public override bool AfterReplication()
         {
             var repResult = new ReplicationResult();
             ReplicationResult lastResult = null;
-
+            // Nastavia sa výsledky poslednej replikácie.
             repResult.CumulativeNumberOfMoves = ReplicationResult;
             repResult.CumulativeStrategyMoves = StrategyNumberOfMoves;
             if (ReplicationResult > SimulationSettings.TresHold)
                 repResult.CumulativeMoreThanK = 1;
-
+            // Testuje sa, či už nejaká replikácia prebehla.
             if(this.ReplicationsResult.Count != 0)
             {
+                // Ak už nejaká replikácia prebehla, tak sa akumuluje súčet pozoroaných premenných.
                 lastResult = ReplicationsResult.Last();
                 repResult.CumulativeNumberOfMoves += lastResult.CumulativeNumberOfMoves;
                 repResult.CumulativeMoreThanK += lastResult.CumulativeMoreThanK;
                 repResult.CumulativeStrategyMoves += lastResult.CumulativeStrategyMoves;
             }
-            
+            // Akumulovaný výsledok poslednej replikácie je vložený do Listu.
             this.ReplicationsResult.Add(repResult);
 
+            // V kontrolery sú vykonané po replikačné procedúry.
             return this.Controller.AfterReplicationUpdate();
         }
-
+        // Metóda obsahuje procedúry, ktoré sa majú vykonať počas replikácie.
         public override void DoReplication()
         {
+            // Vykoná sa jeden beh náhodného pokusu.
             ReplicationResult = robotProblem.runTest();
             //System.Threading.Thread.Sleep(1);
         }
-
+        // Metóda predstavujúca beh simulácie.
         public override SimulationStatus RunSimulation()
         {
             bool cancelPending = false;
-            // V pripade ak pokracujeme v predchadzajucej simulacii, tak nevytvarame novu instanciu objektu.
-
+            // Vykonávanie replikácií, kym nedosiahneme ich požadovaný počet.
             while(ActualReplication < NumberOfReplications)
             {
                 ++ActualReplication;
@@ -71,12 +76,13 @@ namespace Simulator_App.Model
                 if (cancelPending)
                     break;
             }
+            // Ak bolo signalizované prerušenie simulácie, tak sa kontroluje, či náhodou už simulácia neskončila poslednú replikáciu.
             if (cancelPending)
-                return SimulationStatus.CANCELED;
+                return ActualReplication != NumberOfReplications ? SimulationStatus.CANCELED : SimulationStatus.FINISHED;
 
             return SimulationStatus.FINISHED;
         }
-
+        // Metóda, v ktorej dôjde k aplikovaniu simulačných nastavení.
         public override void ApplySettings(SimulationSettings settings)
         {
             this.SimulationSettings = settings;
@@ -88,7 +94,7 @@ namespace Simulator_App.Model
             else
                 this.robotProblem.Generator = new Random(settings.Seed);
         }
-
+        // Metóda zabezpečí vyrsetovanie simulácie pre jej prípadný ďalsí beh.
         public override bool Reset()
         {
             this.ActualReplication = 0;
@@ -96,34 +102,34 @@ namespace Simulator_App.Model
             if (SimulationSettings.AutoSeed)
             {
                 this.robotProblem.Generator = new Random();
-                Console.WriteLine("Nastaveny random seed");
+                //Console.WriteLine("Nastaveny random seed");
             }
             else
             {
                 Console.WriteLine($"Nastaveny seed {SimulationSettings.Seed}");
-                this.robotProblem.Generator = new Random(SimulationSettings.Seed);
+                //this.robotProblem.Generator = new Random(SimulationSettings.Seed);
             }
             this.ReplicationsResult.Clear();
             return true;
         }
-
+        // Vracia hodnotu, či už bola vykonaná posledná replikácia a teda simulácia skončila.
         public bool HasFinished()
         {
             return ActualReplication == NumberOfReplications;
         }
-
+        // Metóda obsahujúca procedúry, ktoré majú byť vykonané pred začiatkom simulácie.
         public override void BeforeSimulation()
         {
             robotProblem.Reset(SimulationSettings.XSize, SimulationSettings.YSize,
                                SimulationSettings.XStart, SimulationSettings.YStart);
             StrategyNumberOfMoves = robotProblem.runTestWithStrategy();
         }
-
+        // Metóda obsahuje procedúry, ktoré majú byť vykonané po skončení simulácie.
         public override void AfterSimulation()
         {
             throw new NotImplementedException();
         }
-
+        // Getter na List obashujúci výsledné hodnoty predošlých replikácií.
         public override List<ReplicationResult> GetReplicationsResult()
         {
             return this.ReplicationsResult;

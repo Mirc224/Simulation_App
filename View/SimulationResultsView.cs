@@ -9,6 +9,7 @@ using OxyPlot.Series;
 
 namespace Simulator_App.View
 {
+    // Trieda obsahujúca grafické komponenty a metódy pre zobrazovanie výsledkov simulácie.
     public class SimulationResultsView
     {
         public PlotView SimulationGraph { get; set; }
@@ -31,27 +32,27 @@ namespace Simulator_App.View
             this.SimulationGraph.Model = new OxyPlot.PlotModel { Title = "Mean avearage moves" };
             this.ProbabilityGraph.Model = new OxyPlot.PlotModel { Title = "Probability" };
         }
-
+        // Metóda, ktorá zavolá metódy na zobrazenie výstupov alebo prípadne vykreslenie grafov v závislosti od hodnôt v štruktúre DataForUpdate.
         public void Update(Controller.DataForUpdate data)
         {
             if(data.redrawGraphs)
                 RedrawGraphs();
             UpdateValueLabels(data.meanValue, data.probability, data.strategyMoves);
         }
-
+        // Vykoná prekreslenie grafov.
         public void RedrawGraphs()
         {
             SimulationGraph.InvalidatePlot(true);
             ProbabilityGraph.InvalidatePlot(true);
         }
-
+        // Aktualizuje hodnoty labelov, ktoré zorazujú aktuálnu hodnotu sledovnaých štatistík.
         private void UpdateValueLabels(double meanValue, double probability, double meanStrategy)
         {
             this.MeanValueLabel.Text = $"Mean value: {meanValue}";
             this.ProbabilityLabel.Text = $"More than K: {probability}";
             this.StrategyLabel.Text = $"Strategy mean value: {meanStrategy}";
         }
-
+        // Metóda resetuje grafy a pripraví ich na zobrazovanie údajov.
         public void SetGraphs(LineSeries meanMovSeries, LineSeries probabilitySeries)
         {
             ProbabilityGraph.Model.ResetAllAxes();

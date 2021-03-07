@@ -34,7 +34,6 @@ namespace Simulator_App.Model
         public SimulationSettings SimulationSettings { get; set; }
         // List výsledkov replikácií.
         public List<ReplicationResult> ReplicationsResult { get; set; }
-
         // Obsahuje metódy, ktoré sa májú vykonať pred každou replikáciou.
         public abstract void BeforeReplication();
         // Obsahuje metódy, ktoré sa májú vykonať po každej replikácii.
