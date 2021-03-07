@@ -23,6 +23,7 @@ namespace Simulator_App.Model
             this.startX = startX;
             this.startY = startY;
             this.Generator = new Random();
+            Console.WriteLine("nove");
         }
 
         public double runTestWithStrategy()

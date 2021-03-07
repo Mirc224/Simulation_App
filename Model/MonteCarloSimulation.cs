@@ -62,8 +62,9 @@ namespace Simulator_App.Model
             bool cancelPending = false;
             // V pripade ak pokracujeme v predchadzajucej simulacii, tak nevytvarame novu instanciu objektu.
 
-            for (ActualReplication = ActualReplication; ActualReplication < NumberOfReplications; ActualReplication++)
+            while(ActualReplication < NumberOfReplications)
             {
+                ++ActualReplication;
                 BeforeReplication();
                 DoReplication();
                 cancelPending = AfterReplication();
@@ -82,12 +83,26 @@ namespace Simulator_App.Model
             this.NumberOfReplications = SimulationSettings.NumberOfReplications;
             this.TresHold = SimulationSettings.TresHold;
             this.ActualReplication = 0;
+            if (settings.AutoSeed)
+                this.robotProblem.Generator = new Random();
+            else
+                this.robotProblem.Generator = new Random(settings.Seed);
         }
 
         public override bool Reset()
         {
             this.ActualReplication = 0;
             this.ReplicationResult = 0;
+            if (SimulationSettings.AutoSeed)
+            {
+                this.robotProblem.Generator = new Random();
+                Console.WriteLine("Nastaveny random seed");
+            }
+            else
+            {
+                Console.WriteLine($"Nastaveny seed {SimulationSettings.Seed}");
+                this.robotProblem.Generator = new Random(SimulationSettings.Seed);
+            }
             this.ReplicationsResult.Clear();
             return true;
         }

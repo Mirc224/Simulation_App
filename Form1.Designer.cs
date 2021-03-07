@@ -43,19 +43,22 @@ namespace Simulator_App
             this.XStartLabel = new System.Windows.Forms.Label();
             this.YStartLabel = new System.Windows.Forms.Label();
             this.XSizeInput = new System.Windows.Forms.TextBox();
+            this.SeedLabel = new System.Windows.Forms.Label();
+            this.SeedInput = new System.Windows.Forms.TextBox();
             this.OptConfirmButton = new System.Windows.Forms.Button();
             this.optionsLabel = new System.Windows.Forms.Label();
+            this.AutoSeedCheck = new System.Windows.Forms.CheckBox();
             this.simControlPanel = new System.Windows.Forms.Panel();
             this.StopButton = new System.Windows.Forms.Button();
             this.RunPauseButton = new System.Windows.Forms.Button();
             this.graphPanel = new System.Windows.Forms.Panel();
             this.ProbabilityGraph = new OxyPlot.WindowsForms.PlotView();
             this.StatusPanel = new System.Windows.Forms.Panel();
+            this.StrategyMovesLabel = new System.Windows.Forms.Label();
             this.ProbabilityLabel = new System.Windows.Forms.Label();
             this.MeanValueLabel = new System.Windows.Forms.Label();
             this.SimulationGraph = new OxyPlot.WindowsForms.PlotView();
             this.simulationWorker = new System.ComponentModel.BackgroundWorker();
-            this.StrategyMovesLabel = new System.Windows.Forms.Label();
             this.simOptionsPanel.SuspendLayout();
             this.optionsLayoutPanel.SuspendLayout();
             this.simControlPanel.SuspendLayout();
@@ -68,6 +71,7 @@ namespace Simulator_App
             this.simOptionsPanel.Controls.Add(this.optionsLayoutPanel);
             this.simOptionsPanel.Controls.Add(this.OptConfirmButton);
             this.simOptionsPanel.Controls.Add(this.optionsLabel);
+            this.simOptionsPanel.Controls.Add(this.AutoSeedCheck);
             this.simOptionsPanel.Dock = System.Windows.Forms.DockStyle.Right;
             this.simOptionsPanel.Location = new System.Drawing.Point(901, 0);
             this.simOptionsPanel.Name = "simOptionsPanel";
@@ -91,16 +95,19 @@ namespace Simulator_App
             this.optionsLayoutPanel.Controls.Add(this.XStartLabel, 0, 2);
             this.optionsLayoutPanel.Controls.Add(this.YStartLabel, 0, 3);
             this.optionsLayoutPanel.Controls.Add(this.XSizeInput, 1, 0);
+            this.optionsLayoutPanel.Controls.Add(this.SeedLabel, 0, 6);
+            this.optionsLayoutPanel.Controls.Add(this.SeedInput, 1, 6);
             this.optionsLayoutPanel.Location = new System.Drawing.Point(0, 65);
             this.optionsLayoutPanel.Name = "optionsLayoutPanel";
-            this.optionsLayoutPanel.RowCount = 6;
+            this.optionsLayoutPanel.RowCount = 7;
             this.optionsLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.optionsLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.optionsLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.optionsLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.optionsLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.optionsLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.optionsLayoutPanel.Size = new System.Drawing.Size(274, 222);
+            this.optionsLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.optionsLayoutPanel.Size = new System.Drawing.Size(274, 224);
             this.optionsLayoutPanel.TabIndex = 6;
             // 
             // YStartInput
@@ -141,9 +148,10 @@ namespace Simulator_App
             this.ReplicationsLabel.AutoSize = true;
             this.ReplicationsLabel.Location = new System.Drawing.Point(3, 158);
             this.ReplicationsLabel.Name = "ReplicationsLabel";
-            this.ReplicationsLabel.Size = new System.Drawing.Size(131, 64);
+            this.ReplicationsLabel.Size = new System.Drawing.Size(131, 34);
             this.ReplicationsLabel.TabIndex = 2;
             this.ReplicationsLabel.Text = "Replications (actual 100):";
+            this.ReplicationsLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // ReplicationsInput
             // 
@@ -166,6 +174,7 @@ namespace Simulator_App
             this.TresholdLabel.Size = new System.Drawing.Size(131, 34);
             this.TresholdLabel.TabIndex = 4;
             this.TresholdLabel.Text = "Size of K (actual 1): ";
+            this.TresholdLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // TresholdInput
             // 
@@ -188,6 +197,7 @@ namespace Simulator_App
             this.XSizeLabel.Size = new System.Drawing.Size(131, 28);
             this.XSizeLabel.TabIndex = 6;
             this.XSizeLabel.Text = "X size (actual 5):";
+            this.XSizeLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // YSizeLabel
             // 
@@ -200,6 +210,7 @@ namespace Simulator_App
             this.YSizeLabel.Size = new System.Drawing.Size(131, 28);
             this.YSizeLabel.TabIndex = 7;
             this.YSizeLabel.Text = "Y size (actual 5):";
+            this.YSizeLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // XStartLabel
             // 
@@ -212,6 +223,7 @@ namespace Simulator_App
             this.XStartLabel.Size = new System.Drawing.Size(131, 34);
             this.XStartLabel.TabIndex = 8;
             this.XStartLabel.Text = "X start position (actual 0):";
+            this.XStartLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // YStartLabel
             // 
@@ -224,6 +236,7 @@ namespace Simulator_App
             this.YStartLabel.Size = new System.Drawing.Size(131, 34);
             this.YStartLabel.TabIndex = 9;
             this.YStartLabel.Text = "Y start position (actual 0):";
+            this.YStartLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // XSizeInput
             // 
@@ -234,6 +247,29 @@ namespace Simulator_App
             this.XSizeInput.Name = "XSizeInput";
             this.XSizeInput.Size = new System.Drawing.Size(131, 22);
             this.XSizeInput.TabIndex = 2;
+            // 
+            // SeedLabel
+            // 
+            this.SeedLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.SeedLabel.AutoSize = true;
+            this.SeedLabel.Location = new System.Drawing.Point(3, 192);
+            this.SeedLabel.Name = "SeedLabel";
+            this.SeedLabel.Size = new System.Drawing.Size(131, 32);
+            this.SeedLabel.TabIndex = 10;
+            this.SeedLabel.Text = "Seed:";
+            this.SeedLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // SeedInput
+            // 
+            this.SeedInput.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.SeedInput.Location = new System.Drawing.Point(140, 195);
+            this.SeedInput.Name = "SeedInput";
+            this.SeedInput.Size = new System.Drawing.Size(131, 22);
+            this.SeedInput.TabIndex = 11;
             // 
             // OptConfirmButton
             // 
@@ -258,6 +294,20 @@ namespace Simulator_App
             this.optionsLabel.Size = new System.Drawing.Size(100, 29);
             this.optionsLabel.TabIndex = 3;
             this.optionsLabel.Text = "Options";
+            // 
+            // AutoSeedCheck
+            // 
+            this.AutoSeedCheck.AutoSize = true;
+            this.AutoSeedCheck.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.AutoSeedCheck.Checked = true;
+            this.AutoSeedCheck.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.AutoSeedCheck.Location = new System.Drawing.Point(37, 295);
+            this.AutoSeedCheck.Name = "AutoSeedCheck";
+            this.AutoSeedCheck.Size = new System.Drawing.Size(122, 21);
+            this.AutoSeedCheck.TabIndex = 12;
+            this.AutoSeedCheck.Text = "Random seed:";
+            this.AutoSeedCheck.UseVisualStyleBackColor = true;
+            this.AutoSeedCheck.CheckedChanged += new System.EventHandler(this.AutoSeedCheck_CheckedChanged);
             // 
             // simControlPanel
             // 
@@ -326,21 +376,33 @@ namespace Simulator_App
             this.StatusPanel.Size = new System.Drawing.Size(901, 41);
             this.StatusPanel.TabIndex = 1;
             // 
+            // StrategyMovesLabel
+            // 
+            this.StrategyMovesLabel.AutoSize = true;
+            this.StrategyMovesLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold);
+            this.StrategyMovesLabel.Location = new System.Drawing.Point(610, 13);
+            this.StrategyMovesLabel.Name = "StrategyMovesLabel";
+            this.StrategyMovesLabel.Size = new System.Drawing.Size(186, 20);
+            this.StrategyMovesLabel.TabIndex = 2;
+            this.StrategyMovesLabel.Text = "Strategy mean value:";
+            // 
             // ProbabilityLabel
             // 
             this.ProbabilityLabel.AutoSize = true;
-            this.ProbabilityLabel.Location = new System.Drawing.Point(331, 13);
+            this.ProbabilityLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold);
+            this.ProbabilityLabel.Location = new System.Drawing.Point(309, 13);
             this.ProbabilityLabel.Name = "ProbabilityLabel";
-            this.ProbabilityLabel.Size = new System.Drawing.Size(93, 17);
+            this.ProbabilityLabel.Size = new System.Drawing.Size(123, 20);
             this.ProbabilityLabel.TabIndex = 1;
             this.ProbabilityLabel.Text = "More than K: ";
             // 
             // MeanValueLabel
             // 
             this.MeanValueLabel.AutoSize = true;
-            this.MeanValueLabel.Location = new System.Drawing.Point(12, 16);
+            this.MeanValueLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.MeanValueLabel.Location = new System.Drawing.Point(8, 13);
             this.MeanValueLabel.Name = "MeanValueLabel";
-            this.MeanValueLabel.Size = new System.Drawing.Size(85, 17);
+            this.MeanValueLabel.Size = new System.Drawing.Size(110, 20);
             this.MeanValueLabel.TabIndex = 0;
             this.MeanValueLabel.Text = "Mean value:";
             // 
@@ -348,7 +410,7 @@ namespace Simulator_App
             // 
             this.SimulationGraph.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.SimulationGraph.Location = new System.Drawing.Point(3, 47);
+            this.SimulationGraph.Location = new System.Drawing.Point(0, 47);
             this.SimulationGraph.Name = "SimulationGraph";
             this.SimulationGraph.PanCursor = System.Windows.Forms.Cursors.Hand;
             this.SimulationGraph.Size = new System.Drawing.Size(895, 354);
@@ -365,15 +427,6 @@ namespace Simulator_App
             this.simulationWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.SimulationWorker_DoWork);
             this.simulationWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.SimulationWorker_ProgressChanged);
             this.simulationWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.SimulationWorker_RunWorkerCompleted);
-            // 
-            // StrategyMovesLabel
-            // 
-            this.StrategyMovesLabel.AutoSize = true;
-            this.StrategyMovesLabel.Location = new System.Drawing.Point(629, 16);
-            this.StrategyMovesLabel.Name = "StrategyMovesLabel";
-            this.StrategyMovesLabel.Size = new System.Drawing.Size(178, 21);
-            this.StrategyMovesLabel.TabIndex = 2;
-            this.StrategyMovesLabel.Text = "Strategy mean value:";
             // 
             // AppGUI
             // 
@@ -426,6 +479,9 @@ namespace Simulator_App
         private System.Windows.Forms.Label MeanValueLabel;
         private OxyPlot.WindowsForms.PlotView ProbabilityGraph;
         private System.Windows.Forms.Label StrategyMovesLabel;
+        private System.Windows.Forms.Label SeedLabel;
+        private System.Windows.Forms.TextBox SeedInput;
+        private System.Windows.Forms.CheckBox AutoSeedCheck;
     }
 }
 

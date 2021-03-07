@@ -14,5 +14,8 @@ namespace Simulator_App.Model
         public int YSize { get; set; } = 5;
         public int XStart { get; set; } = 0;
         public int YStart { get; set; } = 0;
+        public int Seed { get; set; } = 0;
+        public bool AutoSeed { get; set; } = true;
+
     }
 }

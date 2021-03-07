@@ -32,13 +32,16 @@ namespace Simulator_App
                                                                                XStartLabel,
                                                                                YStartLabel,
                                                                                TresholdLabel,
-                                                                               ReplicationsLabel},
+                                                                               ReplicationsLabel,
+                                                                               SeedLabel},
                                                                  new TextBox[] { XSizeInput,
                                                                                  YSizeInput,
                                                                                  XStartInput,
                                                                                  YStartInput,
                                                                                  TresholdInput,
-                                                                                 ReplicationsInput});
+                                                                                 ReplicationsInput,
+                                                                                 SeedInput},
+                                                                                 AutoSeedCheck);
             this._controller = new Controller.Controller(this);
         }
 
@@ -93,9 +96,9 @@ namespace Simulator_App
                 this._controller.SetPauseClicked(false);
             } else
             {
+                this._controller.SetPauseClicked(true);
                 this.simulationWorker.CancelAsync();
                 RunPauseButton.Text = "Continue";
-                this._controller.SetPauseClicked(true);
             }
         }
         
@@ -154,5 +157,9 @@ namespace Simulator_App
             this._controller.SetPauseClicked(false);
         }
 
+        private void AutoSeedCheck_CheckedChanged(object sender, EventArgs e)
+        {
+            SimOptionsView.RandomSeedCheckboxToggle();
+        }
     }
 }

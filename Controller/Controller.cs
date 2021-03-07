@@ -18,6 +18,8 @@ namespace Simulator_App.Controller
         public string yStart;
         public string numberOfReplications;
         public string tresHold;
+        public string seed;
+        public bool autoSeed;
         public bool errorOccured;
     }
 
@@ -56,12 +58,13 @@ namespace Simulator_App.Controller
         {
             _simulationSettings = new SimulationSettings
             {
-                NumberOfReplications = 10000,
+                NumberOfReplications = 1000000,
                 TresHold = 1,
                 XSize = 10,
                 YSize = 10,
                 XStart = 0,
-                YStart = 0
+                YStart = 0,
+                AutoSeed = true
             };
 
             this._applicationGUI = applicationGUI;
@@ -97,7 +100,10 @@ namespace Simulator_App.Controller
             if(this.SimulationStatus != Simulation.SimulationStatus.FINISHED)
             {
                 if (this.PauseClicked)
+                {
                     this.SimulationStatus = Simulation.SimulationStatus.PAUSED;
+                }
+                    
             }
             else
             {
@@ -154,6 +160,7 @@ namespace Simulator_App.Controller
             int ySize = -1;
             int xStart = -1;
             int yStart = -1;
+            int seed = -1;
             double tresHold = -1;
             if (!Int32.TryParse(input.xSize, out xSize))
             {
@@ -191,7 +198,16 @@ namespace Simulator_App.Controller
                 input.tresHold = "Error";
             }
 
-            if(input.errorOccured)
+            if(!input.autoSeed)
+            {
+                if (!Int32.TryParse(input.seed, out seed))
+                {
+                    input.errorOccured = true;
+                    input.seed = "Error";
+                }
+            }
+
+            if (input.errorOccured)
             {
                 return null;
             }
@@ -201,7 +217,9 @@ namespace Simulator_App.Controller
                                             XStart = xStart, 
                                             YStart = yStart,
                                             NumberOfReplications = numberOfReplications,
-                                            TresHold = tresHold};
+                                            TresHold = tresHold,
+                                            Seed = seed,
+                                            AutoSeed = input.autoSeed};
         }
         
         private void SetSimulationSettings(SimulationSettings simSettings) 

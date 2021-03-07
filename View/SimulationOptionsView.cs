@@ -16,6 +16,7 @@ namespace Simulator_App.View
         public Label YStartLabel { get; set; }
         public Label TresholdLabel { get; set; }
         public Label ReplicationsLabel { get; set; }
+        public Label SeedLabel { get; set; }
 
         public TextBox XSizeInput { get; set; }
         public TextBox YSizeInput { get; set; }
@@ -23,7 +24,9 @@ namespace Simulator_App.View
         public TextBox YStartInput { get; set; }
         public TextBox TresholdInput { get; set; }
         public TextBox ReplicationsInput { get; set; }
-        public SimulationOptionsView(Label[] labels, TextBox[] textBoxes)
+        public TextBox SeedInput { get; set; }
+        public CheckBox RandomSeedCheck { get; set; }
+        public SimulationOptionsView(Label[] labels, TextBox[] textBoxes, CheckBox randomSeed)
         {
             XSizeLabel = labels[0];
             YSizeLabel = labels[1];
@@ -31,6 +34,7 @@ namespace Simulator_App.View
             YStartLabel = labels[3];
             TresholdLabel = labels[4];
             ReplicationsLabel = labels[5];
+            SeedLabel = labels[6];
 
             XSizeInput = textBoxes[0];
             YSizeInput = textBoxes[1];
@@ -38,6 +42,14 @@ namespace Simulator_App.View
             YStartInput = textBoxes[3];
             TresholdInput = textBoxes[4];
             ReplicationsInput = textBoxes[5];
+            SeedInput = textBoxes[6];
+            RandomSeedCheck = randomSeed;
+            Initialize();
+        }
+
+        private void Initialize()
+        {
+            SeedInput.Enabled = false;
         }
 
         public OptionsInput GetOptionsInput()
@@ -49,6 +61,11 @@ namespace Simulator_App.View
             settings.yStart = this.YStartInput.Text;
             settings.numberOfReplications = this.ReplicationsInput.Text;
             settings.tresHold = this.TresholdInput.Text;
+            settings.autoSeed = this.RandomSeedCheck.Checked;
+
+            if (!this.RandomSeedCheck.Checked)
+                settings.seed = this.SeedInput.Text;
+
             settings.errorOccured = false;
             return settings;
         }
@@ -61,6 +78,8 @@ namespace Simulator_App.View
             this.YStartInput.Text = settings.yStart;
             this.ReplicationsInput.Text = settings.numberOfReplications;
             this.TresholdInput.Text = settings.tresHold;
+            if (!this.RandomSeedCheck.Checked)
+                this.SeedInput.Text = settings.seed;
         }
 
         public void SetOptionsLablesText(OptionsInput settings)
@@ -73,6 +92,14 @@ namespace Simulator_App.View
             ReplicationsLabel.Text = $"Replications (actual {settings.numberOfReplications}):";
         }
 
-
+        public void RandomSeedCheckboxToggle()
+        {
+            if (!RandomSeedCheck.Checked)
+            {
+                this.SeedInput.Enabled = true;
+            }
+            else
+                this.SeedInput.Enabled = false;
+        }
     }
 }
