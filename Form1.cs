@@ -28,11 +28,13 @@ namespace Simulator_App
         public AppGUI()
         {
             InitializeComponent();
-            this.SimResultView = new View.SimulationResultsView(SimulationGraph,
-                                                                ProbabilityGraph,
+            this.SimResultView = new View.SimulationResultsView(new OxyPlot.WindowsForms.PlotView[] {SimulationGraph,
+                                                                ProbabilityGraph }, new Label[] {
                                                                 MeanValueLabel,
+                                                                MinValueLabel,
+                                                                MaxValueLabel,
                                                                 ProbabilityLabel,
-                                                                StrategyMovesLabel);
+                                                                StrategyMovesLabel});
 
             this.SimOptionsView = new View.SimulationOptionsView(new Label[] { XSizeLabel, 
                                                                                YSizeLabel,

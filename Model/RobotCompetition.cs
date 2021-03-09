@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.Collections;
 namespace Simulator_App.Model
 {
     // Trieda, ktorá v sebe zahŕňa atribúty a metódy pre riešenie úlohy Monte Carlo o počte krokov, ktoré robot na hracej ploche vykoná.
@@ -39,13 +39,13 @@ namespace Simulator_App.Model
             var actualY = startY;
             bool[,] visitedNodes = new bool[xSize, ySize];
             // Nastavenie všetkých hodnôt poľa na hodnotu false, symbolizujúcu, že robot tento vrchol ešte nenavštívil.
-            for (int i = 0; i < visitedNodes.GetLength(0); i++)
+            /*for (int i = 0; i < visitedNodes.GetLength(0); i++)
             {
                 for (int j = 0; j < visitedNodes.GetLength(1); j++)
                 {
                     visitedNodes[i, j] = false;
                 }
-            }
+            }*/
 
             bool goRightIfUCan = false;
             bool goUpIfUCan = false;
@@ -124,17 +124,10 @@ namespace Simulator_App.Model
             var numberOfMoves = 0;
             var actualX = startX;
             var actualY = startY;
-            bool[,] visitedNodes = new bool[xSize, ySize];
-            // Nastavenie všetkých hodnôt poľa na hodnotu false, symbolizujúcu, že robot tento vrchol ešte nenavštívil.
-            for (int i = 0; i < visitedNodes.GetLength(0); i++)
-            {
-                for (int j = 0; j < visitedNodes.GetLength(1); j++)
-                {
-                    visitedNodes[i, j] = false;
-                }
-            }
+            //bool[,] visitedNodes = new bool[xSize, ySize];
+            BitArray visitedNodes = new BitArray(xSize* ySize);
             // Začinajúci vrchol sa nastaví na už navštívený.
-            visitedNodes[actualX, actualY] = true;
+            visitedNodes[actualX * xSize + actualY] = true;
             int chosenIndex = -1;
             // V nekonečnom cykle sa zisťujú smery, v ktorých sa robot môže pohnúť a dôjde k náhodnému výberu jedného zo smerov.
             while (true)
@@ -189,11 +182,11 @@ namespace Simulator_App.Model
                         break;
                 }
                 // Test, či už vrchol, do ktorého sme sa teraz dostali nebol navštívený.
-                if (!visitedNodes[actualX, actualY])
+                if (!visitedNodes[actualX * xSize + actualY])
                 {
                     // Ak tento vrchol ešte nebol navštívený, tak sa zvýši počet vykonaných krokov o 1 a vrchol sa označí za navštívený.
                     ++numberOfMoves;
-                    visitedNodes[actualX, actualY] = true;
+                    visitedNodes[actualX * xSize + actualY] = true;
                 }
                 else
                 {

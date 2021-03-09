@@ -29,6 +29,8 @@ namespace Simulator_App.Controller
         public double meanValue;
         public double probability;
         public double strategyMoves;
+        public double maxValue;
+        public double minValue;
         public bool redrawGraphs;
         // Kopírovací konštruktor.
         public DataForUpdate(DataForUpdate othr)
@@ -37,6 +39,8 @@ namespace Simulator_App.Controller
             this.probability = othr.probability;
             this.redrawGraphs = othr.redrawGraphs;
             this.strategyMoves = othr.strategyMoves;
+            this.maxValue = othr.maxValue;
+            this.minValue = othr.minValue;
         }
     }
     // Trieda, ktorá zabezpečuje komunikáciu medzi grafickou a logickou časťou aplikácie.
@@ -150,6 +154,8 @@ namespace Simulator_App.Controller
             this.lastDataForUpdate.meanValue = meanValue;
             this.lastDataForUpdate.probability = probability;
             this.lastDataForUpdate.strategyMoves = meanStrategy;
+            this.lastDataForUpdate.minValue = this._simulation.MinReplicationResult;
+            this.lastDataForUpdate.maxValue = this._simulation.MaxReplicationResult;
             this.lastDataForUpdate.redrawGraphs = false;
             // Po každých 5% replikácií dochádza k požiadavke na aktualizáciu stavu.
             if(iterationsCount % (int)(_simulationSettings.NumberOfReplications * 0.05) == 0)
@@ -182,28 +188,67 @@ namespace Simulator_App.Controller
             int yStart = -1;
             int seed = -1;
             double tresHold = -1;
+
+            bool xSizeError = false;
+            bool ySizeError = false;
             if (!Int32.TryParse(input.xSize, out xSize))
             {
                 input.errorOccured = true;
+                xSizeError = true;
                 input.xSize = "Error";
+            }
+            else
+            {
+                if (xSize < 0)
+                {
+                    input.errorOccured = true;
+                    xSizeError = true;
+                    input.xSize = "Error: less than 0";
+                }
             }
 
             if (!Int32.TryParse(input.ySize, out ySize))
             {
                 input.errorOccured = true;
+                ySizeError = true;
                 input.ySize = "Error";
+            }
+            else
+            {
+                if (ySize < 0)
+                {
+                    input.errorOccured = true;
+                    ySizeError = true;
+                    input.ySize = "Error: less than 0";
+                }
             }
 
             if (!Int32.TryParse(input.xStart, out xStart))
             {
                 input.errorOccured = true;
                 input.xStart = "Error";
+            } 
+            else
+            {
+                if (!xSizeError && (xStart >= xSize || xStart < 0))
+                {
+                    input.errorOccured = true;
+                    input.xStart = $"Error: value have to be between 0 and {xSize}";
+                }
             }
 
             if (!Int32.TryParse(input.yStart, out yStart))
             {
                 input.errorOccured = true;
                 input.yStart = "Error";
+            }
+            else
+            {
+                if (!ySizeError && (yStart >= ySize || yStart < 0))
+                {
+                    input.errorOccured = true;
+                    input.xStart = $"Error: value have to be between 0 and {ySize}";
+                }
             }
 
             if (!Int32.TryParse(input.numberOfReplications, out numberOfReplications))

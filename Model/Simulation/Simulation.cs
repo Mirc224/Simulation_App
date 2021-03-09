@@ -28,6 +28,10 @@ namespace Simulator_App.Model
         public int NumberOfReplications { get; set; } = 0;
         // Obsahuje výsledok poslednej replikácie.
         public double ReplicationResult { get; set; } = 0;
+        // Minimálna hodnota sledovanej štatistiky počas behu simulácie.
+        public double MinReplicationResult { get; set; } = 0;
+        // Maximalna hodnota sledovanej štatistiky počas behu simulácie.
+        public double MaxReplicationResult { get; set; } = 0;
         // Referencia na kontroler.
         public Controller.Controller Controller { get; set; }
         // Aktuálne nastavenia pre beh simulácie.

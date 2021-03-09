@@ -17,19 +17,23 @@ namespace Simulator_App.View
         public Label MeanValueLabel { get; set; }
         public Label ProbabilityLabel { get; set; }
         public Label StrategyLabel { get; set; }
-        public SimulationResultsView(PlotView smGraph, PlotView probGraph, Label meanValueL, Label probL, Label strategyL)
+        public Label MinValueLabel { get; set; }
+        public Label MaxValueLabel { get; set; }
+        public SimulationResultsView(PlotView[] plots, Label[] labels)
         {
-            this.SimulationGraph = smGraph;
-            this.ProbabilityGraph = probGraph;
-            this.MeanValueLabel = meanValueL;
-            this.ProbabilityLabel = probL;
-            this.StrategyLabel = strategyL;
+            this.SimulationGraph = plots[0];
+            this.ProbabilityGraph = plots[1];
+            this.MeanValueLabel = labels[0];
+            this.MinValueLabel = labels[1];
+            this.MaxValueLabel = labels[2];
+            this.ProbabilityLabel = labels[3];
+            this.StrategyLabel = labels[4];
             this.Initialize();
         }
 
         public void Initialize()
         {
-            this.SimulationGraph.Model = new OxyPlot.PlotModel { Title = "Mean avearage moves" };
+            this.SimulationGraph.Model = new OxyPlot.PlotModel { Title = "Mean number of moves" };
             this.ProbabilityGraph.Model = new OxyPlot.PlotModel { Title = "Probability" };
         }
         // Metóda, ktorá zavolá metódy na zobrazenie výstupov alebo prípadne vykreslenie grafov v závislosti od hodnôt v štruktúre DataForUpdate.
@@ -37,7 +41,7 @@ namespace Simulator_App.View
         {
             if(data.redrawGraphs)
                 RedrawGraphs();
-            UpdateValueLabels(data.meanValue, data.probability, data.strategyMoves);
+            UpdateValueLabels(data.meanValue, data.minValue, data.maxValue, data.probability, data.strategyMoves);
         }
         // Vykoná prekreslenie grafov.
         public void RedrawGraphs()
@@ -46,9 +50,11 @@ namespace Simulator_App.View
             ProbabilityGraph.InvalidatePlot(true);
         }
         // Aktualizuje hodnoty labelov, ktoré zorazujú aktuálnu hodnotu sledovnaých štatistík.
-        private void UpdateValueLabels(double meanValue, double probability, double meanStrategy)
+        private void UpdateValueLabels(double meanValue, double minValue, double maxValue, double probability, double meanStrategy)
         {
             this.MeanValueLabel.Text = $"Mean value: {meanValue}";
+            this.MinValueLabel.Text = $"Min value: {minValue}";
+            this.MaxValueLabel.Text = $"Max value: {maxValue}";
             this.ProbabilityLabel.Text = $"More than K: {probability}";
             this.StrategyLabel.Text = $"Strategy mean value: {meanStrategy}";
         }

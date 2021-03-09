@@ -59,6 +59,8 @@ namespace Simulator_App
             this.MeanValueLabel = new System.Windows.Forms.Label();
             this.SimulationGraph = new OxyPlot.WindowsForms.PlotView();
             this.simulationWorker = new System.ComponentModel.BackgroundWorker();
+            this.MinValueLabel = new System.Windows.Forms.Label();
+            this.MaxValueLabel = new System.Windows.Forms.Label();
             this.simOptionsPanel.SuspendLayout();
             this.optionsLayoutPanel.SuspendLayout();
             this.simControlPanel.SuspendLayout();
@@ -73,7 +75,7 @@ namespace Simulator_App
             this.simOptionsPanel.Controls.Add(this.optionsLabel);
             this.simOptionsPanel.Controls.Add(this.AutoSeedCheck);
             this.simOptionsPanel.Dock = System.Windows.Forms.DockStyle.Right;
-            this.simOptionsPanel.Location = new System.Drawing.Point(901, 0);
+            this.simOptionsPanel.Location = new System.Drawing.Point(1478, 0);
             this.simOptionsPanel.Name = "simOptionsPanel";
             this.simOptionsPanel.Size = new System.Drawing.Size(277, 854);
             this.simOptionsPanel.TabIndex = 0;
@@ -316,7 +318,7 @@ namespace Simulator_App
             this.simControlPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.simControlPanel.Location = new System.Drawing.Point(0, 0);
             this.simControlPanel.Name = "simControlPanel";
-            this.simControlPanel.Size = new System.Drawing.Size(901, 60);
+            this.simControlPanel.Size = new System.Drawing.Size(1478, 60);
             this.simControlPanel.TabIndex = 2;
             // 
             // StopButton
@@ -348,7 +350,7 @@ namespace Simulator_App
             this.graphPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.graphPanel.Location = new System.Drawing.Point(0, 60);
             this.graphPanel.Name = "graphPanel";
-            this.graphPanel.Size = new System.Drawing.Size(901, 794);
+            this.graphPanel.Size = new System.Drawing.Size(1478, 794);
             this.graphPanel.TabIndex = 3;
             // 
             // ProbabilityGraph
@@ -358,7 +360,7 @@ namespace Simulator_App
             this.ProbabilityGraph.Location = new System.Drawing.Point(3, 407);
             this.ProbabilityGraph.Name = "ProbabilityGraph";
             this.ProbabilityGraph.PanCursor = System.Windows.Forms.Cursors.Hand;
-            this.ProbabilityGraph.Size = new System.Drawing.Size(898, 387);
+            this.ProbabilityGraph.Size = new System.Drawing.Size(1475, 387);
             this.ProbabilityGraph.TabIndex = 2;
             this.ProbabilityGraph.Text = "plotView1";
             this.ProbabilityGraph.ZoomHorizontalCursor = System.Windows.Forms.Cursors.SizeWE;
@@ -367,20 +369,22 @@ namespace Simulator_App
             // 
             // StatusPanel
             // 
+            this.StatusPanel.Controls.Add(this.MaxValueLabel);
+            this.StatusPanel.Controls.Add(this.MinValueLabel);
             this.StatusPanel.Controls.Add(this.StrategyMovesLabel);
             this.StatusPanel.Controls.Add(this.ProbabilityLabel);
             this.StatusPanel.Controls.Add(this.MeanValueLabel);
             this.StatusPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.StatusPanel.Location = new System.Drawing.Point(0, 0);
             this.StatusPanel.Name = "StatusPanel";
-            this.StatusPanel.Size = new System.Drawing.Size(901, 41);
+            this.StatusPanel.Size = new System.Drawing.Size(1478, 41);
             this.StatusPanel.TabIndex = 1;
             // 
             // StrategyMovesLabel
             // 
             this.StrategyMovesLabel.AutoSize = true;
             this.StrategyMovesLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold);
-            this.StrategyMovesLabel.Location = new System.Drawing.Point(610, 13);
+            this.StrategyMovesLabel.Location = new System.Drawing.Point(1196, 13);
             this.StrategyMovesLabel.Name = "StrategyMovesLabel";
             this.StrategyMovesLabel.Size = new System.Drawing.Size(186, 20);
             this.StrategyMovesLabel.TabIndex = 2;
@@ -390,7 +394,7 @@ namespace Simulator_App
             // 
             this.ProbabilityLabel.AutoSize = true;
             this.ProbabilityLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold);
-            this.ProbabilityLabel.Location = new System.Drawing.Point(309, 13);
+            this.ProbabilityLabel.Location = new System.Drawing.Point(769, 13);
             this.ProbabilityLabel.Name = "ProbabilityLabel";
             this.ProbabilityLabel.Size = new System.Drawing.Size(123, 20);
             this.ProbabilityLabel.TabIndex = 1;
@@ -413,7 +417,7 @@ namespace Simulator_App
             this.SimulationGraph.Location = new System.Drawing.Point(0, 47);
             this.SimulationGraph.Name = "SimulationGraph";
             this.SimulationGraph.PanCursor = System.Windows.Forms.Cursors.Hand;
-            this.SimulationGraph.Size = new System.Drawing.Size(895, 354);
+            this.SimulationGraph.Size = new System.Drawing.Size(1472, 354);
             this.SimulationGraph.TabIndex = 0;
             this.SimulationGraph.Text = "plotView1";
             this.SimulationGraph.ZoomHorizontalCursor = System.Windows.Forms.Cursors.SizeWE;
@@ -428,11 +432,31 @@ namespace Simulator_App
             this.simulationWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.SimulationWorker_ProgressChanged);
             this.simulationWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.SimulationWorker_RunWorkerCompleted);
             // 
+            // MinValueLabel
+            // 
+            this.MinValueLabel.AutoSize = true;
+            this.MinValueLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold);
+            this.MinValueLabel.Location = new System.Drawing.Point(350, 13);
+            this.MinValueLabel.Name = "MinValueLabel";
+            this.MinValueLabel.Size = new System.Drawing.Size(95, 20);
+            this.MinValueLabel.TabIndex = 3;
+            this.MinValueLabel.Text = "Min value:";
+            // 
+            // MaxValueLabel
+            // 
+            this.MaxValueLabel.AutoSize = true;
+            this.MaxValueLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold);
+            this.MaxValueLabel.Location = new System.Drawing.Point(510, 13);
+            this.MaxValueLabel.Name = "MaxValueLabel";
+            this.MaxValueLabel.Size = new System.Drawing.Size(99, 20);
+            this.MaxValueLabel.TabIndex = 4;
+            this.MaxValueLabel.Text = "Max value:";
+            // 
             // AppGUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1178, 854);
+            this.ClientSize = new System.Drawing.Size(1755, 854);
             this.Controls.Add(this.graphPanel);
             this.Controls.Add(this.simControlPanel);
             this.Controls.Add(this.simOptionsPanel);
@@ -482,6 +506,8 @@ namespace Simulator_App
         private System.Windows.Forms.Label SeedLabel;
         private System.Windows.Forms.TextBox SeedInput;
         private System.Windows.Forms.CheckBox AutoSeedCheck;
+        private System.Windows.Forms.Label MaxValueLabel;
+        private System.Windows.Forms.Label MinValueLabel;
     }
 }
 

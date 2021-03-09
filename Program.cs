@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+using System.Diagnostics;
+using System.Collections;
 namespace Simulator_App
 {
     static class Program
@@ -14,9 +15,14 @@ namespace Simulator_App
         [STAThread]
         static void Main()
         {
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new AppGUI());
+            /*BitArray myBa = new BitArray(5);
+            myBa[2] = true;
+            for(int i = 0; i < 5; ++i)
+                Console.WriteLine(myBa[i]);*/
             /*            var robComp = new Model.RobotCompetition(10, 10, 5, 5);
                         double sumOfMoves = 0;
                         int moreThanK = 0;

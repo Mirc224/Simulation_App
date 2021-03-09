@@ -14,16 +14,17 @@ namespace Simulator_App.Model
         // Atribút, ktorý udáva hraničnú hodnotu, po prekročení ktorej dôjde k nejakej udalosti.
         public double TresHold { get; set; }
         // Inštancia triedy robotCompetition, ktorá obsahuje implementáciu problému.
-        private RobotCompetition robotProblem = new RobotCompetition(5, 5, 0, 0);
+        private RobotCompetition _robotProblem = new RobotCompetition(5, 5, 0, 0);
         // Atribút v sebe drží hodnotu o počte vykonaných krokov pri použití stratégie. Stratégia je exaktná, takže sa nebude
         // počas replikácií meniť a preto je zbytočné ju za každým počítať nanovo.
-        private double StrategyNumberOfMoves = -1;
+        private double _strategyNumberOfMoves = -1;
+
 
         public MonteCarloSimulation(Controller.Controller controller, SimulationSettings defaultSettings)
         {
             this.Controller = controller;
             this.ApplySettings(defaultSettings);
-            this.ReplicationsResult = new List<ReplicationResult>();
+            this.ReplicationsResult = new List<ReplicationResult>(20000001);
         }
         // Metóda, ktorá sa vykoná pred každou replikáciou.
         public override void BeforeReplication()
@@ -37,9 +38,14 @@ namespace Simulator_App.Model
             ReplicationResult lastResult = null;
             // Nastavia sa výsledky poslednej replikácie.
             repResult.CumulativeNumberOfMoves = ReplicationResult;
-            repResult.CumulativeStrategyMoves = StrategyNumberOfMoves;
+            repResult.CumulativeStrategyMoves = _strategyNumberOfMoves;
             if (ReplicationResult > SimulationSettings.TresHold)
                 repResult.CumulativeMoreThanK = 1;
+
+            if (ReplicationResult < MinReplicationResult)
+                MinReplicationResult = ReplicationResult;
+            if (ReplicationResult > MaxReplicationResult)
+                MaxReplicationResult = ReplicationResult;
             // Testuje sa, či už nejaká replikácia prebehla.
             if(this.ReplicationsResult.Count != 0)
             {
@@ -59,7 +65,7 @@ namespace Simulator_App.Model
         public override void DoReplication()
         {
             // Vykoná sa jeden beh náhodného pokusu.
-            ReplicationResult = robotProblem.runTest();
+            ReplicationResult = _robotProblem.runTest();
             //System.Threading.Thread.Sleep(1);
         }
         // Metóda predstavujúca beh simulácie.
@@ -90,18 +96,20 @@ namespace Simulator_App.Model
             this.TresHold = SimulationSettings.TresHold;
             this.ActualReplication = 0;
             if (settings.AutoSeed)
-                this.robotProblem.Generator = new Random();
+                this._robotProblem.Generator = new Random();
             else
-                this.robotProblem.Generator = new Random(settings.Seed);
+                this._robotProblem.Generator = new Random(settings.Seed);
         }
         // Metóda zabezpečí vyrsetovanie simulácie pre jej prípadný ďalsí beh.
         public override bool Reset()
         {
             this.ActualReplication = 0;
             this.ReplicationResult = 0;
+            this.MinReplicationResult = double.MaxValue;
+            this.MaxReplicationResult = double.MinValue;
             if (SimulationSettings.AutoSeed)
             {
-                this.robotProblem.Generator = new Random();
+                this._robotProblem.Generator = new Random();
                 //Console.WriteLine("Nastaveny random seed");
             }
             else
@@ -120,9 +128,9 @@ namespace Simulator_App.Model
         // Metóda obsahujúca procedúry, ktoré majú byť vykonané pred začiatkom simulácie.
         public override void BeforeSimulation()
         {
-            robotProblem.Reset(SimulationSettings.XSize, SimulationSettings.YSize,
+            _robotProblem.Reset(SimulationSettings.XSize, SimulationSettings.YSize,
                                SimulationSettings.XStart, SimulationSettings.YStart);
-            StrategyNumberOfMoves = robotProblem.runTestWithStrategy();
+            _strategyNumberOfMoves = _robotProblem.runTestWithStrategy();
         }
         // Metóda obsahuje procedúry, ktoré majú byť vykonané po skončení simulácie.
         public override void AfterSimulation()
