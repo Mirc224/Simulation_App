@@ -127,7 +127,7 @@ namespace Simulator_App.Controller
             }
             else
             {
-                Console.WriteLine(lastDataForUpdate.meanValue);
+                //Console.WriteLine(lastDataForUpdate.meanValue);
             }
             return true;
         }

@@ -19,6 +19,16 @@ namespace Simulator_App
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new AppGUI());
+
+            /*int pocet = 2000000;
+            Stopwatch stopW = new Stopwatch();
+            BitArray myBa = new BitArray(900000);
+            stopW.Start();
+            for (int i = 0; i < pocet; ++i)
+                myBa = new BitArray(900000);
+            //myBa.SetAll(false);
+            stopW.Stop();
+            Console.WriteLine(stopW.Elapsed);*/
             /*BitArray myBa = new BitArray(5);
             myBa[2] = true;
             for(int i = 0; i < 5; ++i)

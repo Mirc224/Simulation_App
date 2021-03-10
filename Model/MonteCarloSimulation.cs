@@ -29,7 +29,7 @@ namespace Simulator_App.Model
         // Metóda, ktorá sa vykoná pred každou replikáciou.
         public override void BeforeReplication()
         {
-
+            this._robotProblem.ActualIteration = ActualReplication + 1;
         }
         // Metóda, ktorá sa vykoná po každej replikácií.
         public override bool AfterReplication()
@@ -71,8 +71,10 @@ namespace Simulator_App.Model
         // Metóda predstavujúca beh simulácie.
         public override SimulationStatus RunSimulation()
         {
+            var stopW = new System.Diagnostics.Stopwatch();
             bool cancelPending = false;
             // Vykonávanie replikácií, kym nedosiahneme ich požadovaný počet.
+            //stopW.Start();
             while(ActualReplication < NumberOfReplications)
             {
                 ++ActualReplication;
@@ -85,7 +87,8 @@ namespace Simulator_App.Model
             // Ak bolo signalizované prerušenie simulácie, tak sa kontroluje, či náhodou už simulácia neskončila poslednú replikáciu.
             if (cancelPending)
                 return ActualReplication != NumberOfReplications ? SimulationStatus.CANCELED : SimulationStatus.FINISHED;
-
+            //stopW.Stop();
+            //Console.WriteLine(stopW.Elapsed);
             return SimulationStatus.FINISHED;
         }
         // Metóda, v ktorej dôjde k aplikovaniu simulačných nastavení.
@@ -114,8 +117,8 @@ namespace Simulator_App.Model
             }
             else
             {
-                Console.WriteLine($"Nastaveny seed {SimulationSettings.Seed}");
-                //this.robotProblem.Generator = new Random(SimulationSettings.Seed);
+                //Console.WriteLine($"Nastaveny seed {SimulationSettings.Seed}");
+                this._robotProblem.Generator = new Random(SimulationSettings.Seed);
             }
             this.ReplicationsResult.Clear();
             return true;

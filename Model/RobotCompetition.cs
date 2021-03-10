@@ -10,23 +10,27 @@ namespace Simulator_App.Model
     class RobotCompetition
     {
         // Horiznontálna veľkosť plochy, na ktorej sa pohybuje robot.
-        private int xSize { get; set; }
+        private int _xSize;
         // Vertikalna veľkosť plochy, na ktorej sa pohybuje robot.
-        private int ySize { get; set; }
+        private int _ySize;
         // X súradnica, na ktorej robot začína.
-        private int startX { get; set; }
+        private int _startX;
         // Y súradnica, na ktorej robot začína.
-        private int startY { get; set; }
+        private int _startY;
         // Generátor náhodných čísel pre túto úlohu.
         public Random Generator { get; set; }
         // Pole bool hodnôt, v ktorom sa na pozicii udáva, či sa môže robot týmto smerom pohnúť v nasledujúcom kroku.
-        private bool[] PossibleDirections = new bool[] { false, false, false, false };
+        //private bool[] _possibleDirections = new bool[] { false, false, false, false };
+        private BitArray _possibleDirections = new BitArray(4);
+        //private BitArray _visitedNodes;
+        private int[,] _visitedNodes;
+        public int ActualIteration { get; set; } = 0;
         public RobotCompetition(int xSize, int ySize, int startX, int startY)
         {
-            this.xSize = xSize;
-            this.ySize = ySize;
-            this.startX = startX;
-            this.startY = startY;
+            this._xSize = xSize;
+            this._ySize = ySize;
+            this._startX = startX;
+            this._startY = startY;
             this.Generator = new Random();
         }
         // Metóda, ktorá v sebe zahŕňa stratégiu pohybu. Návratovou hodnotou je počet krokov, ktoré robot vykoná pred tým ako sa dostane do vrchola, kde už bol.
@@ -35,26 +39,18 @@ namespace Simulator_App.Model
         public double runTestWithStrategy()
         {
             var numberOfMoves = -1;
-            var actualX = startX;
-            var actualY = startY;
-            bool[,] visitedNodes = new bool[xSize, ySize];
-            // Nastavenie všetkých hodnôt poľa na hodnotu false, symbolizujúcu, že robot tento vrchol ešte nenavštívil.
-            /*for (int i = 0; i < visitedNodes.GetLength(0); i++)
-            {
-                for (int j = 0; j < visitedNodes.GetLength(1); j++)
-                {
-                    visitedNodes[i, j] = false;
-                }
-            }*/
+            var actualX = _startX;
+            var actualY = _startY;
+            bool[,] visitedNodes = new bool[_xSize, _ySize];
 
             bool goRightIfUCan = false;
             bool goUpIfUCan = false;
             // Podľa toho, kde sa robot nachádza sa nastavia premenné určujúce, či je možné použiť jeho prioritnú stratégiu, ktrou je ísť čo najviac vpravo, kým sa dá
             // a potom jeden krok hore a potom vľavo.
-            if (actualX < xSize - 1)
+            if (actualX < _xSize - 1)
                 goRightIfUCan = true;
 
-            if (actualY < ySize - 1)
+            if (actualY < _ySize - 1)
                 goUpIfUCan = true;
 
             bool movedHorizontal = true;
@@ -74,11 +70,11 @@ namespace Simulator_App.Model
                     break;
                 }
 
-                if (actualX < xSize - 1 && goRightIfUCan && !needMoveHorizontal)
+                if (actualX < _xSize - 1 && goRightIfUCan && !needMoveHorizontal)
                 {
                     ++actualX;
                     movedHorizontal = false;
-                    if (actualX == xSize - 1)
+                    if (actualX == _xSize - 1)
                         goRightIfUCan = false;
                     continue;
                 } else
@@ -95,7 +91,7 @@ namespace Simulator_App.Model
                     } 
                     else
                     {
-                        if (actualY < ySize - 1 && goUpIfUCan)
+                        if (actualY < _ySize - 1 && goUpIfUCan)
                         {
                             ++actualY;
                             movedHorizontal = true;
@@ -122,36 +118,42 @@ namespace Simulator_App.Model
         public double runTest()
         {
             var numberOfMoves = 0;
-            var actualX = startX;
-            var actualY = startY;
-            //bool[,] visitedNodes = new bool[xSize, ySize];
-            BitArray visitedNodes = new BitArray(xSize* ySize);
+            var actualX = _startX;
+            var actualY = _startY;
+            //bool[,] _visitedNodes = new bool[_xSize, ySize];
+            //00:00:32.9562972
+            //BitArray _visitedNodes = new BitArray(_xSize* ySize);
+            //00:00:24.4807693
+            //_visitedNodes.SetAll(false);
             // Začinajúci vrchol sa nastaví na už navštívený.
-            visitedNodes[actualX * xSize + actualY] = true;
+            //_visitedNodes[actualY * _xSize + actualX] = true;
+            _visitedNodes[actualX, actualY] = ActualIteration;
             int chosenIndex = -1;
             // V nekonečnom cykle sa zisťujú smery, v ktorých sa robot môže pohnúť a dôjde k náhodnému výberu jedného zo smerov.
             while (true)
             {
-                this.ResetDirections();
+                //_possibleDirections = new bool[4];
+                _possibleDirections.SetAll(false);
+                //this.ResetDirections();
                 // Je mozne ist vlavo
                 if (actualX > 0)
                 {
-                    PossibleDirections[0] = true;
+                    _possibleDirections[0] = true;
                 }
                 // Je mozne ist vpravo
-                if (actualX < xSize - 1)
+                if (actualX < _xSize - 1)
                 {
-                    PossibleDirections[1] = true;
+                    _possibleDirections[1] = true;
                 }
                 // Je mozne ist dole
                 if (actualY > 0)
                 {
-                    PossibleDirections[2] = true;
+                    _possibleDirections[2] = true;
                 }
                 // Je mozne ist hore
-                if (actualY < ySize - 1)
+                if (actualY < _ySize - 1)
                 {
-                    PossibleDirections[3] = true;
+                    _possibleDirections[3] = true;
                 }
 
                 // V rámci tohto cyklu generuje náhodný generátor od 0 po 3, kým nevygeneruje index do poľa, ktorý symbolizuje smer, ktorým je možné sa z daného
@@ -159,7 +161,7 @@ namespace Simulator_App.Model
                 while(true)
                 {
                     chosenIndex = Generator.Next(4);
-                    if (PossibleDirections[chosenIndex])
+                    if (_possibleDirections[chosenIndex])
                         break;
                 }
                 
@@ -182,17 +184,29 @@ namespace Simulator_App.Model
                         break;
                 }
                 // Test, či už vrchol, do ktorého sme sa teraz dostali nebol navštívený.
-                if (!visitedNodes[actualX * xSize + actualY])
+                if (_visitedNodes[actualX, actualY] != ActualIteration)
                 {
                     // Ak tento vrchol ešte nebol navštívený, tak sa zvýši počet vykonaných krokov o 1 a vrchol sa označí za navštívený.
                     ++numberOfMoves;
-                    visitedNodes[actualX * xSize + actualY] = true;
+                    _visitedNodes[actualX, actualY] = ActualIteration;
                 }
                 else
                 {
                     // Ak vrchol už navštívený bol, dôjde k prerušeniu nekonečnéhu cyklu.
                     break;
                 }
+                /* // Pamatovo usporna verzia
+                                if (!_visitedNodes[actualY * _xSize + actualX])
+                                {
+                                    // Ak tento vrchol ešte nebol navštívený, tak sa zvýši počet vykonaných krokov o 1 a vrchol sa označí za navštívený.
+                                    ++numberOfMoves;
+                                    _visitedNodes[actualY * _xSize + actualX] = true;
+                                }
+                                else
+                                {
+                                    // Ak vrchol už navštívený bol, dôjde k prerušeniu nekonečnéhu cyklu.
+                                    break;
+                                }*/
             }
 
             return numberOfMoves;
@@ -200,18 +214,20 @@ namespace Simulator_App.Model
         // Metóda nastaví všetky smery na false. Používa sa vždy po vykonaní kroku.
         private void ResetDirections()
         {
-            for (int i = 0; i < PossibleDirections.GetLength(0); i++)
+            /*for (int i = 0; i < _possibleDirections.GetLength(0); i++)
             {
-                PossibleDirections[i] = false;
-            }
+                _possibleDirections[i] = false;
+            }*/
         }
         // Znovu nastavenie hodnôt atribútov.
         public void Reset(int xSize, int ySize, int xStart, int yStart)
         {
-            this.xSize = xSize;
-            this.ySize = ySize;
-            this.startX = xStart;
-            this.startY = yStart;
+            this._xSize = xSize;
+            this._ySize = ySize;
+            this._startX = xStart;
+            this._startY = yStart;
+            _visitedNodes = new int[xSize, ySize];
+            //_visitedNodes = new BitArray(_xSize * ySize);
         }
     }
 }
