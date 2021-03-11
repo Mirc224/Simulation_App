@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using OxyPlot.WindowsForms;
 using System.Windows.Forms;
 using OxyPlot.Series;
+using OxyPlot.Axes;
 
 namespace Simulator_App.View
 {
@@ -34,6 +35,17 @@ namespace Simulator_App.View
         public void Initialize()
         {
             this.SimulationGraph.Model = new OxyPlot.PlotModel { Title = "Mean number of moves" };
+            var linearAxis1 = new LinearAxis();
+            linearAxis1.MajorGridlineStyle = OxyPlot.LineStyle.Solid;
+            linearAxis1.MinorGridlineStyle = OxyPlot.LineStyle.Dot;
+            linearAxis1.Position = AxisPosition.Bottom;
+            this.SimulationGraph.Model.Axes.Add(linearAxis1);
+
+            var linearAxis2 = new LinearAxis();
+            linearAxis2.MajorGridlineStyle = OxyPlot.LineStyle.Solid;
+            linearAxis2.MinorGridlineStyle = OxyPlot.LineStyle.Dot;
+            this.SimulationGraph.Model.Axes.Add(linearAxis2);
+
             this.ProbabilityGraph.Model = new OxyPlot.PlotModel { Title = "Probability" };
         }
         // Metóda, ktorá zavolá metódy na zobrazenie výstupov alebo prípadne vykreslenie grafov v závislosti od hodnôt v štruktúre DataForUpdate.

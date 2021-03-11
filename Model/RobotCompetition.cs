@@ -22,7 +22,9 @@ namespace Simulator_App.Model
         // Pole bool hodnôt, v ktorom sa na pozicii udáva, či sa môže robot týmto smerom pohnúť v nasledujúcom kroku.
         //private bool[] _possibleDirections = new bool[] { false, false, false, false };
         private BitArray _possibleDirections = new BitArray(4);
+        // Pamäťovo úspornejšia verzia
         //private BitArray _visitedNodes;
+        // Časovo úspornejšia verzia
         private int[,] _visitedNodes;
         public int ActualIteration { get; set; } = 0;
         public RobotCompetition(int xSize, int ySize, int startX, int startY)
@@ -42,6 +44,9 @@ namespace Simulator_App.Model
             var actualX = _startX;
             var actualY = _startY;
             bool[,] visitedNodes = new bool[_xSize, _ySize];
+
+            if (_xSize == 1 && _ySize == 1)
+                return 0;
 
             bool goRightIfUCan = false;
             bool goUpIfUCan = false;
@@ -120,21 +125,22 @@ namespace Simulator_App.Model
             var numberOfMoves = 0;
             var actualX = _startX;
             var actualY = _startY;
-            //bool[,] _visitedNodes = new bool[_xSize, ySize];
-            //00:00:32.9562972
-            //BitArray _visitedNodes = new BitArray(_xSize* ySize);
-            //00:00:24.4807693
+
+            if (_xSize == 1 && _ySize == 1)
+                return 0;
+            // V pripade pamatovo uspornejsej verzie
             //_visitedNodes.SetAll(false);
             // Začinajúci vrchol sa nastaví na už navštívený.
             //_visitedNodes[actualY * _xSize + actualX] = true;
+
+            // V časovo uspornejšej verzii.
             _visitedNodes[actualX, actualY] = ActualIteration;
             int chosenIndex = -1;
             // V nekonečnom cykle sa zisťujú smery, v ktorých sa robot môže pohnúť a dôjde k náhodnému výberu jedného zo smerov.
             while (true)
             {
-                //_possibleDirections = new bool[4];
+                
                 _possibleDirections.SetAll(false);
-                //this.ResetDirections();
                 // Je mozne ist vlavo
                 if (actualX > 0)
                 {
@@ -226,7 +232,9 @@ namespace Simulator_App.Model
             this._ySize = ySize;
             this._startX = xStart;
             this._startY = yStart;
+            // Časovo úspornejšia verzia
             _visitedNodes = new int[xSize, ySize];
+            // Pamäťovo úspornejšia verzia
             //_visitedNodes = new BitArray(_xSize * ySize);
         }
     }

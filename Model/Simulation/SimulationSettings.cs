@@ -24,6 +24,8 @@ namespace Simulator_App.Model
         // Seed, ktorý je použitý v prípade, ak nie je nastavený random seed.
         public int Seed { get; set; } = 0;
         // Hovorí o tom, či má byť použitý random seed.
+        public int Preheating { get; set; } = 0;
+        public int RecordInterval { get; set; } = 0;
         public bool AutoSeed { get; set; } = true;
 
     }

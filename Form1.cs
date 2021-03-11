@@ -42,14 +42,18 @@ namespace Simulator_App
                                                                                YStartLabel,
                                                                                TresholdLabel,
                                                                                ReplicationsLabel,
-                                                                               SeedLabel},
+                                                                               SeedLabel,
+                                                                               PreheatingLabel,
+                                                                               RecordIntervalLabel},
                                                                  new TextBox[] { XSizeInput,
                                                                                  YSizeInput,
                                                                                  XStartInput,
                                                                                  YStartInput,
                                                                                  TresholdInput,
                                                                                  ReplicationsInput,
-                                                                                 SeedInput},
+                                                                                 SeedInput,
+                                                                                 PreheatingInput,
+                                                                                 RecordIntervalInput},
                                                                                  AutoSeedCheck);
             this._controller = new Controller.Controller(this);
         }
@@ -157,6 +161,8 @@ namespace Simulator_App
                 yStart = settings.YStart.ToString(),
                 numberOfReplications = settings.NumberOfReplications.ToString(),
                 tresHold = settings.TresHold.ToString(),
+                preheating = settings.Preheating.ToString(),
+                recordInterval = settings.RecordInterval.ToString(),
                 errorOccured = false
             };
             SimOptionsView.SetOptionsInputText(data);

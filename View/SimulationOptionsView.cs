@@ -18,6 +18,8 @@ namespace Simulator_App.View
         public Label TresholdLabel { get; set; }
         public Label ReplicationsLabel { get; set; }
         public Label SeedLabel { get; set; }
+        public Label PreheatingLabel { get; set; }
+        public Label RecordIntervalLabel { get; set; }
 
         public TextBox XSizeInput { get; set; }
         public TextBox YSizeInput { get; set; }
@@ -26,6 +28,8 @@ namespace Simulator_App.View
         public TextBox TresholdInput { get; set; }
         public TextBox ReplicationsInput { get; set; }
         public TextBox SeedInput { get; set; }
+        public TextBox PreheatingInput { get; set; }
+        public TextBox RecordIntervalInput { get; set; }
         public CheckBox RandomSeedCheck { get; set; }
         public SimulationOptionsView(Label[] labels, TextBox[] textBoxes, CheckBox randomSeed)
         {
@@ -36,6 +40,8 @@ namespace Simulator_App.View
             TresholdLabel = labels[4];
             ReplicationsLabel = labels[5];
             SeedLabel = labels[6];
+            PreheatingLabel = labels[7];
+            RecordIntervalLabel = labels[8];
 
             XSizeInput = textBoxes[0];
             YSizeInput = textBoxes[1];
@@ -44,6 +50,8 @@ namespace Simulator_App.View
             TresholdInput = textBoxes[4];
             ReplicationsInput = textBoxes[5];
             SeedInput = textBoxes[6];
+            PreheatingInput = textBoxes[7];
+            RecordIntervalInput = textBoxes[8];
             RandomSeedCheck = randomSeed;
             Initialize();
         }
@@ -63,6 +71,8 @@ namespace Simulator_App.View
             settings.numberOfReplications = this.ReplicationsInput.Text;
             settings.tresHold = this.TresholdInput.Text;
             settings.autoSeed = this.RandomSeedCheck.Checked;
+            settings.preheating = this.PreheatingInput.Text;
+            settings.recordInterval = this.RecordIntervalInput.Text;
 
             if (!this.RandomSeedCheck.Checked)
                 settings.seed = this.SeedInput.Text;
@@ -79,6 +89,8 @@ namespace Simulator_App.View
             this.YStartInput.Text = settings.yStart;
             this.ReplicationsInput.Text = settings.numberOfReplications;
             this.TresholdInput.Text = settings.tresHold;
+            this.PreheatingInput.Text = settings.preheating;
+            this.RecordIntervalInput.Text = settings.recordInterval;
             if (!this.RandomSeedCheck.Checked)
                 this.SeedInput.Text = settings.seed;
         }
@@ -91,6 +103,8 @@ namespace Simulator_App.View
             YStartLabel.Text = $"Y start position (actual {settings.yStart}):";
             TresholdLabel.Text = $"Size of K (actual {settings.tresHold}):";
             ReplicationsLabel.Text = $"Replications (actual {settings.numberOfReplications}):";
+            PreheatingLabel.Text = $"Preheating (actual {settings.preheating}):";
+            RecordIntervalLabel.Text = $"Record interval (actual {settings.recordInterval}):";
         }
         // Metóda, ktorá aktivuje alebo deaktivuje pole pre zadavnie seedu na zákalde toho, či je začiarknutý checkbox.
         public void RandomSeedCheckboxToggle()

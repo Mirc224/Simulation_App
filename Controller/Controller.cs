@@ -20,6 +20,8 @@ namespace Simulator_App.Controller
         public string numberOfReplications;
         public string tresHold;
         public string seed;
+        public string preheating;
+        public string recordInterval;
         public bool autoSeed;
         public bool errorOccured;
     }
@@ -76,6 +78,8 @@ namespace Simulator_App.Controller
                 YSize = 10,
                 XStart = 0,
                 YStart = 0,
+                Preheating = 0,
+                RecordInterval = 1,
                 AutoSeed = true
             };
 
@@ -145,10 +149,14 @@ namespace Simulator_App.Controller
             var meanStrategy = lastReplication.CumulativeStrategyMoves / iterationsCount;
 
             // Testuje sa, či už bolo vykonaných 25% replikácií a ak áno, začnú sa zbierať dáta, ktoré buú zobrazené v grafoch.
-            if (iterationsCount >= _simulationSettings.NumberOfReplications * 0.25)
+            if (iterationsCount >= _simulationSettings.Preheating)
             {
-                this._lineSeriesMeanMoves.Points.Add(new OxyPlot.DataPoint(iterationsCount, meanValue));
-                this._lineSeriesProbability.Points.Add(new OxyPlot.DataPoint(iterationsCount, probability));
+                if (iterationsCount % _simulationSettings.RecordInterval == 0)
+                {
+                    this._lineSeriesMeanMoves.Points.Add(new OxyPlot.DataPoint(iterationsCount, meanValue));
+                    this._lineSeriesProbability.Points.Add(new OxyPlot.DataPoint(iterationsCount, probability));
+                }
+                
             }
             // Nastavenie hodnôt pre šturkúru držiacu posledne vypočítané požadované štatistiky.
             this.lastDataForUpdate.meanValue = meanValue;
@@ -180,13 +188,14 @@ namespace Simulator_App.Controller
         // Metóda, v ktorej dochádza k parsovaniu vstupov a v prípade chyby k priradeniu chybovej hlášky.
         private SimulationSettings ParseSimulationSettings(ref OptionsInput input)
         {
-            int numberOfIterations = -1;
             int numberOfReplications = -1;
             int xSize = -1;
             int ySize = -1;
             int xStart = -1;
             int yStart = -1;
             int seed = -1;
+            int preheating = -1;
+            int recordInterval = -1;
             double tresHold = -1;
 
             bool xSizeError = false;
@@ -263,7 +272,35 @@ namespace Simulator_App.Controller
                 input.tresHold = "Error";
             }
 
-            if(!input.autoSeed)
+            if (!Int32.TryParse(input.preheating, out preheating))
+            {
+                input.errorOccured = true;
+                input.preheating = "Error";
+            }
+            else
+            {
+                if (preheating < 0)
+                {
+                    input.errorOccured = true;
+                    input.preheating = "Error: less than 0";
+                }
+            }
+
+            if (!Int32.TryParse(input.recordInterval, out recordInterval))
+            {
+                input.errorOccured = true;
+                input.recordInterval = "Error";
+            }
+            else
+            {
+                if (recordInterval < 0)
+                {
+                    input.errorOccured = true;
+                    input.recordInterval = "Error: less than 0";
+                }
+            }
+
+            if (!input.autoSeed)
             {
                 if (!Int32.TryParse(input.seed, out seed))
                 {
@@ -284,6 +321,8 @@ namespace Simulator_App.Controller
                                             NumberOfReplications = numberOfReplications,
                                             TresHold = tresHold,
                                             Seed = seed,
+                                            Preheating = preheating,
+                                            RecordInterval = recordInterval,
                                             AutoSeed = input.autoSeed};
         }
         // Nastavenie nových simulačných nastavení.
